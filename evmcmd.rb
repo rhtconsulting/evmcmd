@@ -9,11 +9,11 @@ require 'readline'
 require 'savon'
 
 Savon.configure do |config|
-#  config.log = false
+  config.log = false
   config.pretty_print_xml = true
-#  config.log_level = :info
-#  config.raise_errors = false
-#  HTTPI.log = false
+  config.log_level = :info
+  config.raise_errors = false
+  HTTPI.log = false
 end
 
 def help
