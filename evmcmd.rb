@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 $INSTALL_PATH="/opt/evmcmd"
 
-load "#{$INSTALL_PATH}/lib/evmcmd_globals.rb"
+load 'lib/evmcmd_globals.rb'
 require 'optparse'
 require 'ostruct'
 require 'strscan'
