@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
-$url = "https://10.15.69.175/vmdbws/wsdl"
+$url = "https://10.16.132.165/vmdbws/wsdl"
 $user = "admin"
 $password = 'smartvm'
