@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
-load "lib/select.rb"
-load "lib/management_systems.rb"
-load "lib/hosts.rb"
-load "lib/resource_pools.rb"
-load "lib/clusters.rb"
-load "lib/datastores.rb"
-load "lib/virtual_machines.rb"
+load 'lib/select.rb'
+load 'lib/management_systems.rb'
+load 'lib/hosts.rb'
+load 'lib/resource_pools.rb'
+load 'lib/clusters.rb'
+load 'lib/datastores.rb'
+load 'lib/virtual_machines.rb'
 
 # Revision
 $version = "0.000001 alpha"
