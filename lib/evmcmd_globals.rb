@@ -15,7 +15,7 @@ $version = "0.000001 alpha"
 $cmdprompt = "evmcmd>"
 
 def login
-  load "#{$INSTALL_PATH}/evmcmd.conf.rb"
+  load 'evmcmd.conf.rb'
   # Set up Savon client
   @client = Savon::Client.new do |wsdl, http|
     wsdl.document = "#{$url}"
