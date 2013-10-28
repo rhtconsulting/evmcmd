@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
-load 'lib/select.rb'
-load 'lib/management_systems.rb'
-load 'lib/hosts.rb'
-load 'lib/resource_pools.rb'
-load 'lib/clusters.rb'
-load 'lib/datastores.rb'
-load 'lib/virtual_machines.rb'
+load "#{$INSTALL_PATH}/lib/select.rb"
+load "#{$INSTALL_PATH}/lib/management_systems.rb"
+load "#{$INSTALL_PATH}/lib/hosts.rb"
+load "#{$INSTALL_PATH}/lib/resource_pools.rb"
+load "#{$INSTALL_PATH}/lib/clusters.rb"
+load "#{$INSTALL_PATH}/lib/datastores.rb"
+load "#{$INSTALL_PATH}/lib/virtual_machines.rb"
 
 # Revision
 $version = "0.000001 alpha"
@@ -15,7 +15,7 @@ $version = "0.000001 alpha"
 $cmdprompt = "evmcmd>"
 
 def login
-  load 'evmcmd.conf.rb'
+  load "#{$INSTALL_PATH}/evmcmd.conf.rb"
   # Set up Savon client
   @client = Savon::Client.new do |wsdl, http|
     wsdl.document = "#{$url}"
