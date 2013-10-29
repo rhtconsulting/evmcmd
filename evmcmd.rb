@@ -22,6 +22,7 @@ puts "#  This is a work in progress, only have commands to allow to query cloudf
 
 \t Commands that can currently be run:
 \t\tmanagementsystem_listall
+\t\tmanagementsystem_tags
 \t\thost_listall
 \t\tvirtualmachine_listall
 \t\tcluster_listall
@@ -39,6 +40,7 @@ help
 
 LIST = [
   'managementsystem_listall',
+  'managementsystem_tags',
   'host_listall',
   'host_getvms',
   'virtualmachine_listall',
