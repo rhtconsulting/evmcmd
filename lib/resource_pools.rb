@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-def resourcepool_listall
+def resourcepool_listall(*args)
   login
   message_title = "Resource Pool"
   response = @client.request :get_resource_pool_list do

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-def managementsystem_listall
+def managementsystem_listall(*args)
   login
   message_title = "Management System"
   response = @client.request "GetEmsList"
@@ -11,15 +11,19 @@ def managementsystem_listall
   puts "#{guid_output}"
 end
 
-def managementsystem_tags(*args)
-  @get_vars = args[0]
-  @get_vars.each { |a| p a }
-  @get_vars.keys.each { |name| instance_variable_set "@" + name.to_s, get_vars[name] }
-  #get_vars.each { |(a,b)| puts "#{a} #{b}" }
-  login
-  response = @client.request :ems_get_tags do
-    soap.body = { :emsGuid => "02f0f85e-3b54-11e3-bce6-005056b367d4" }
+def managementsystem_gettags(*args)
+  if args[0] == "default"
+    puts "Error, you must specify emsGuid or name with a value"
+  else
+    h = splitOpts(args[0])
+    puts h.inspect
+    emsGuid = h['emsGuid']
+    login
+    response = @client.request :ems_get_tags do
+      soap.body = { :emsGuid => "#{emsGuid}" }
+    end
+    response_hash =  response.to_hash[:ems_get_tags_response][:return]
+    output = AddHashToArray(response_hash[:item])
+    output.each { |key| showminimal("Category", "#{key[:category_display_name]}", "Tag", "#{key[:tag_display_name]}") }
   end
-  response_hash =  response.to_hash[:ems_get_tags_response][:return]
-  response_hash[:item].each { |key| showminimal("Category", "#{key[:category_display_name]}", "Tag", "#{key[:tag_display_name]}") }
 end

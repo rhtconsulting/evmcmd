@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-def cluster_listall
+def cluster_listall(*args)
   login
   message_title = "Cluster"
   response = @client.request :get_cluster_list do

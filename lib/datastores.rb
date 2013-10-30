@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-def datastore_listall
+def datastore_listall(*args)
   login
   message_title = "Datastore"
   response = @client.request :get_datastore_list do

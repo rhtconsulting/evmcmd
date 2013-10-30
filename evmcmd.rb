@@ -20,9 +20,11 @@ puts "#  This is a work in progress, only have commands to allow to query cloudf
 
 \t Commands that can currently be run:
 \t\tmanagementsystem_listall
-\t\tmanagementsystem_tags
+\t\tmanagementsystem_gettags
 \t\thost_listall
+\t\thost_gettags
 \t\tvirtualmachine_listall
+\t\tvirtualmachine_gettags
 \t\tcluster_listall
 \t\tresourcepool_listall
 \t\tdatastore_listall
@@ -38,10 +40,12 @@ help
 
 LIST = [
   'managementsystem_listall',
-  'managementsystem_tags',
+  'managementsystem_gettags',
   'host_listall',
+  'host_gettags',
   'host_getvms',
   'virtualmachine_listall',
+  'virtualmachine_gettags',
   'cluster_listall',
   'resourcepool_listall',
   'datastore_listall',
@@ -58,6 +62,9 @@ Readline.completion_proc = comp
 while line = Readline.readline("#{$cmdprompt}", true)
   run_args = line.split
   run_method = run_args.shift
+  if run_args.to_s == '[]'
+    run_args = "default"
+  end
   parseCli(run_method, run_args)
 end
 
