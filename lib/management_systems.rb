@@ -11,7 +11,11 @@ def managementsystem_listall
   puts "#{guid_output}"
 end
 
-def managementsystem_tags
+def managementsystem_tags(*args)
+  @get_vars = args[0]
+  @get_vars.each { |a| p a }
+  @get_vars.keys.each { |name| instance_variable_set "@" + name.to_s, get_vars[name] }
+  #get_vars.each { |(a,b)| puts "#{a} #{b}" }
   login
   response = @client.request :ems_get_tags do
     soap.body = { :emsGuid => "02f0f85e-3b54-11e3-bce6-005056b367d4" }

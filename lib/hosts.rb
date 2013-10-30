@@ -12,7 +12,7 @@ def host_listall
 end
 
 #####################################################################################
-def host_getvms
+def host_getvms(*args)
   login
   message_title = "Host"
   response = @client.request :evm_get_vms do

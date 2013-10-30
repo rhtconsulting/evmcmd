@@ -2,18 +2,16 @@
 $INSTALL_PATH="/opt/evmcmd"
 
 load "#{$INSTALL_PATH}/lib/evmcmd_globals.rb"
-require 'optparse'
-require 'ostruct'
-require 'strscan'
 require 'readline'
 require 'savon'
+require 'rubygems'
 
 Savon.configure do |config|
-  config.log = false
+# config.log = false
   config.pretty_print_xml = true
-  config.log_level = :info
-  config.raise_errors = false
-  HTTPI.log = false
+#  config.log_level = :info
+#  config.raise_errors = false
+#  HTTPI.log = false
 end
 
 def help
@@ -58,7 +56,9 @@ Readline.completion_append_character = ""
 Readline.completion_proc = comp
 
 while line = Readline.readline("#{$cmdprompt}", true)
-  send(line)
+  run_args = line.split
+  run_method = run_args.shift
+  parseCli(run_method, run_args)
 end
 
 

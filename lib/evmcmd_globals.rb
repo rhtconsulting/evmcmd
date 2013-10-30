@@ -33,6 +33,10 @@ def exit
   Process.exit!(true)
 end
 
+def parseCli(run_method, run_args)
+  send(run_method, run_args)
+end
+
 def showminimal(id_title, id_value, name_title, name_value)
   puts "#{id_title}: #{id_value}\t #{name_title}: #{name_value}"
 end
