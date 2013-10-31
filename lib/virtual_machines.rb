@@ -70,7 +70,7 @@ def virtualmachine_details(*args)
               "\tHistory:\t\t\t#{wsinfo[:last_compliance_timestamp]}\n",
               "\nPower Management:\n",
               "\tPower State:\t\t\t#{key[:power_state]}\n",
-              "\tLast Boot Time:\t\t\tasdsa#{key[:boot_time]}\n",
+              "\tLast Boot Time:\t\t\t#{key[:boot_time]}\n",
               "\tState Change On:\t\t#{key[:state_changed_on]}\n",
               "\nDatastore Allocation Summary:\n",
               "\tNumber of Disks:\t\t#{wsinfo[:num_disks]}\n",
