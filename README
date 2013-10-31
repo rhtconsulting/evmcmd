@@ -7,7 +7,6 @@ evmcmd managementsystem_details emsGuid=02f0f85e-3b54-11e3-bce6-005056b367d4
 evmcmd cluster_listall
 evmcmd host_listall
 evmcmd host_gettags hostGuid=29344dcc-3b54-11e3-97a2-005056b367d4
-evmcmd host_gettags hostGuid=28838a46-3b54-11e3-97a2-005056b367d4
 evmcmd virtualmachine_listall
 evmcmd virtualmachine_gettags vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4
 evmcmd virtualmachine_details vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4
@@ -26,7 +25,6 @@ managementsystem_details emsGuid=02f0f85e-3b54-11e3-bce6-005056b367d4
 cluster_listall
 host_listall
 host_gettags hostGuid=29344dcc-3b54-11e3-97a2-005056b367d4
-host_gettags hostGuid=28838a46-3b54-11e3-97a2-005056b367d4
 virtualmachine_listall
 virtualmachine_gettags vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4
 virtualmachine_details vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4
