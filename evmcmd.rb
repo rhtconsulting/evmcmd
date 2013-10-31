@@ -7,7 +7,7 @@ require 'savon'
 require 'rubygems'
 
 Savon.configure do |config|
- config.log = false
+  config.log = false
   config.pretty_print_xml = true
   config.log_level = :info
   config.raise_errors = false
@@ -27,6 +27,7 @@ puts "#  This is a work in progress, only have commands to allow to query cloudf
 \t\thost_gettags
 \t\tvirtualmachine_listall
 \t\tvirtualmachine_gettags
+\t\tvirtualmachine_details
 \t\tcluster_listall
 \t\tresourcepool_listall
 \t\tdatastore_listall
@@ -45,6 +46,7 @@ LIST = [
   'host_getvms',
   'virtualmachine_listall',
   'virtualmachine_gettags',
+  'virtualmachine_details',
   'cluster_listall',
   'resourcepool_listall',
   'datastore_listall',
@@ -60,7 +62,6 @@ Readline.completion_proc = comp
 
 if (ARGV[0].nil?) then
   while line = Readline.readline("#{$cmdprompt}", true)
-    puts line.inspect
     run_args = line.split
     run_method = run_args.shift
     if run_method == nil

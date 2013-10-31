@@ -32,6 +32,31 @@ def managementsystem_gettags(*args)
 end
 
 ########################################################################################################################
+def managementsystem_settags(*args)
+  help =  "Usage: managementsystem_settags [OPTIONS]
+          emsGuid=<unique identifier>
+          category=<category>
+          name=<name>               "
+  if args[0] == "default"
+        puts help
+  else
+    h = splitOpts(args[0])
+    emsGuid = h['emsGuid']
+    category = h['category']
+    name = h['name']
+    login
+    body_hash = {}
+    body_hash['emsGuid'] =  "#{emsGuid}"
+    body_hash['category'] =  "#{category}"
+    body_hash['name'] =  "#{name}"
+
+    response = @client.request :ems_set_tag do  |soap|
+      soap.body = body_hash
+    end
+  end
+end
+
+########################################################################################################################
 def managementsystem_details(*args)
   if args[0] == "default"
     puts "Error, you must specify emsGuid or name with a value"
