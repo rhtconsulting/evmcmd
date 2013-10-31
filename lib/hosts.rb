@@ -8,7 +8,8 @@ def host_listall(*args)
     soap.body = { :emsGuid => "all" }
   end
   response_hash =  response.to_hash[:get_host_list_response][:return]
-  response_hash[:item].each { |key| showminimal("GUID", "#{key[:guid]}", "#{message_title}", "#{key[:name]}") }
+  output = AddHashToArray(response_hash[:item])
+  output.each { |key| showminimal("GUID", "#{key[:guid]}", "#{message_title}", "#{key[:name]}") }
 end
 
 #####################################################################################
@@ -23,20 +24,23 @@ def host_getvms(*args)
   #response_hash[:item].each { |key| showminimal("ID", "#{key[:id]}") }
 end
 
-
+########################################################################################################################
 def host_gettags(*args)
   if args[0] == "default"
-    puts "Error, you must specify ID or name with a value"
+    puts "Error, you must specify emsGuid or name with a value"
   else
     h = splitOpts(args[0])
-    puts h.inspect
-    hostGuid = h['hostGuid']
+    guid = h['hostGuid']
     login
     response = @client.request :host_get_tags do
-      soap.body = { :hostGuid => "#{hostGuid}" }
+      soap.body = { :hostGuid => "#{guid}" }
     end
     response_hash =  response.to_hash[:host_get_tags_response][:return]
-    output = AddHashToArray(response_hash[:item])
-    output.each { |key| showminimal("Category", "#{key[:category_display_name]}", "Tag", "#{key[:tag_display_name]}") }
+    if response_hash[:item] == nil
+      puts "No records found"
+    else
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("Category", "#{key[:category_display_name]}", "Tag", "#{key[:tag_display_name]}") }
+    end
   end
 end
