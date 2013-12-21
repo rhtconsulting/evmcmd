@@ -5,6 +5,7 @@ load "lib/CFMEConnection.rb"
 load "lib/management_systems.rb"
 load "lib/virtual_machines.rb"
 load "lib/hosts.rb"
+load "lib/clusters.rb"
 
 require 'readline'
 require 'savon'
@@ -52,20 +53,20 @@ class EvmCmd
 
     @command = nil  
     @list = [
-        ['managementsystem_listall', 'List All managed systems in the CFME Appliance'],
-        ['managementsystem_gettags', 'Get all the tags that are defined in the CFME Appliance'],
-        ['managementsystem_details', 'Get all the details from the CFME Appliance'],
+        ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
+        ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
+        ['mgtsys_details', 'Get all the details from the CFME Appliance'],
         ['host_listall', 'List all the hosts in the CFME Appliance'],
         ['host_gettags', 'Get all the tags defined for a specific host in the CFME Appliance'],
         ['host_getvms', 'Get all the VMs that are managed by the CFME Appliance'],
-        ['virtualmachine_listall', 'List all the Virtual Machines managed by the CFME Appliance'],
-        ['virtualmachine_gettags', 'Get all the tags for a Virtual Machine'],
-        ['virtualmachine_details', 'Retrieve the Virtual Machine details'],
+        ['vm_listall', 'List all the Virtual Machines managed by the CFME Appliance'],
+        ['vm_gettags', 'Get all the tags for a Virtual Machine'],
+        ['vm_details', 'Retrieve the Virtual Machine details'],
         ['cluster_listall', 'List all the Clusters managed by the CFME Appliance'],
         ['resourcepool_listall', 'List all the resource pools managed by the CFME Appliance'],
         ['datastore_listall', 'List all the Datastores managed by the CFME Appliance'],
-        ['ems_version', 'Get the CFME Appliance Version'],
-        ['help', 'Help me please!'],
+        ['version', 'Get the CFME Appliance Version'],
+        ['help [cmd]', 'Help me please!'],
         ['exit', 'Get me out of here!'],
         ['quit', 'Get me out of here!']
       ].sort
@@ -75,13 +76,13 @@ class EvmCmd
     @client.login("192.168.0.3:4443", "admin", "smartvm")
     @management_sytems = ManagementSystems.new(@client)
     @virtualmachines = VirtualMachines.new(@client)
-    @host=Host.new
+    @host=Host.new(@client)
+    @cluster = Clusters.new(@client)
   end  
 
   ########################################################################################################################
   def help ( cmd )
     if cmd == nil
-
       puts "#  This is a work in progress, only have commands to allow to query cloudforms without options being passed at this time
       #  You are able to tab complete each command if needed
       \t Commands that can currently be run: "
@@ -105,7 +106,6 @@ class EvmCmd
   end
   
   def version
-    puts "here"
     puts @client.ems_version
   end
 
@@ -128,14 +128,20 @@ class EvmCmd
             self.exit
           when "version"
             self.version
-          when "managementsystem_listall"
+          when "mgtsys_listall"
             @management_sytems.listall
           when "vm_list"
             @virtualmachines.listall
           when "vm_gettags"
             @virtualmachines.gettags(run_arguments)
           when "host_list"
-            @client.call(:evm_host_list)
+            @host.listall
+          when "host_getvms"
+            @host.getvms(run_arguments)
+          when "host_gettags"
+            @host.gettags(run_arguments)
+          when "cluster_listall"
+            @cluster.listall
           when "test"
             @evm_commands.each do |cmd|
               begin

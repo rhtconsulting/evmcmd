@@ -9,6 +9,7 @@ class CFMEConnection
 		@user = nil
 		@password = nil
 		@client = nil 
+		@connected = false
 	end
 
 	#######################################################################################################################
@@ -24,7 +25,9 @@ class CFMEConnection
 			@client = Savon::client(wsdl: @url, ssl_verify_mode: :none, ssl_version: :SSLv3, basic_auth: [user,password], log: :false, pretty_print_xml: :true,
 				log_level: :error, raise_errors: :false, log: :false)
 			puts "Connected!"
+			@connected = true
 		rescue => exception
+			@connected = false
 			puts exception.message
 		end
   	end
@@ -33,6 +36,7 @@ class CFMEConnection
   		if cmd != nil
   			puts "Calling #{cmd}"
   			if (args != nil)
+  				puts "Arguments #{args}"
   				return @client.call(cmd, args)
   			else
   				return @client.call(cmd)
@@ -42,7 +46,7 @@ class CFMEConnection
 
   	########################################################################################################################
 	def ems_version
-		response = @client.call :version
+		response = self.call(:version, nil)
   		response_hash =  response.to_hash[:version_response][:return]
 		version = response_hash[:item].join(sep=".")
 		puts "EMS Version: #{version}"
