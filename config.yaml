@@ -1,0 +1,14 @@
+#
+# YAML Config file for evmcmd
+#
+
+# Application config items
+application:
+   prompt: "evmcmd>"
+
+# Connection config items
+connection:
+   host: "192.168.0.3"
+   port: "4443"
+   user: "admin"
+   pass: "smartvm"
