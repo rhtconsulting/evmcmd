@@ -9,7 +9,7 @@ myCmd = EvmCmd.new
 
 arguments = ""
 ARGV.each do |a|
-  arguments = "#{a} "
+  arguments += "#{a} "
 end
 
 myCmd.run(arguments)

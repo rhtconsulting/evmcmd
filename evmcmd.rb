@@ -221,15 +221,7 @@ class EvmCmd
             end
           end
         when "event_list"
-          @client.call(:evm_event_list)
-        when "details"
-          if run_arguments != nil
-            @management_sytems.managementsystem_details(run_arguments)
-          else
-            puts self.help("managementsystem_details")
-          end
-        when "gettags"
-          @management_sytems.gettags(run_arguments)
+          @client.call(:evm_event_list, nil)
         when "help"
           if (run_arguments == nil)
             self.help(nil)

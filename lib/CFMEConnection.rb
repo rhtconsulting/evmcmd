@@ -17,7 +17,6 @@ class CFMEConnection
 	#######################################################################################################################
 	def login (host, user, password)
 		begin
-			puts "Method: login"
 			@host = host
 			@user = user
 			@password = password
@@ -36,9 +35,7 @@ class CFMEConnection
 
   	def call (cmd, args)
   		if cmd != nil
-  			puts "Calling #{cmd}"
   			if (args != nil)
-  				puts "Arguments #{args}"
   				return @client.call(cmd, args)
   			else
   				return @client.call(cmd)
