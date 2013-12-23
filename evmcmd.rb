@@ -231,7 +231,11 @@ class EvmCmd
         when "gettags"
           @management_sytems.gettags(run_arguments)
         when "help"
-          self.help(nil)
+          if (run_arguments == nil)
+            self.help(nil)
+          else 
+            self.help(run_arguments)
+          end
         else
           puts "Unrecognized command"
           self.help(nil)
