@@ -54,7 +54,24 @@ class EvmCmd
       :get_automation_request, :get_automation_task, :vm_invoke_tasks]
     @cmdprompt = "evmcmd>"
 
-    @command = nil  
+    @command = nil 
+    @LIST = [
+        'mgtsys_listall',
+        'mgtsys_gettags',
+        'mgtsys_details',
+        'host_listall',
+        'host_gettags',
+        'host_getvms',
+        'vm_listall',
+        'vm_gettags',
+        'vm_details',
+        'cluster_listall',
+        'resourcepool_listall',
+        'datastore_listall',
+        'version',
+        'help',
+        'exit',
+        'quit'].sort
     @list = [
         ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
         ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
@@ -130,7 +147,7 @@ class EvmCmd
 
   def run (arguments) 
     begin
-      comp = proc { |s| LIST.grep(/^#{Regexp.escape(s)}/) }
+      comp = proc { |s| @LIST.grep(/^#{Regexp.escape(s)}/) }
 
       Readline.completion_append_character = ""
       Readline.completion_proc = comp
@@ -175,7 +192,7 @@ class EvmCmd
           @datastore.listall
         when "resourcepool_listall"
           @resourcepool.listall
-        when "vm_list"
+        when "vm_listall"
           @virtualmachines.listall
         when "vm_gettags"
           @virtualmachines.gettags(run_arguments)

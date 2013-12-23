@@ -12,8 +12,4 @@ ARGV.each do |a|
   arguments = "#{a} "
 end
 
-# if arguments == nil
-# 	arguments = ""
-# end
-puts arguments
 myCmd.run(arguments)
