@@ -1,17 +1,10 @@
 #!/usr/bin/env ruby
 
-#load "#{$INSTALL_PATH}/lib/management_systems.rb"
-#load "#{$INSTALL_PATH}/lib/hosts.rb"
-#load "#{$INSTALL_PATH}/lib/resource_pools.rb"
-#load "#{$INSTALL_PATH}/lib/clusters.rb"
-#load "#{$INSTALL_PATH}/lib/datastores.rb"
-#load "#{$INSTALL_PATH}/lib/virtual_machines.rb"
-
 # Revision
 $version = "0.000001 alpha"
 
 # Command Prompt
-$cmdprompt = "evmcmd>"
+#$cmdprompt = "evmcmd>"
 
 
 ########################################################################################################################

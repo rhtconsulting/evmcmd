@@ -4,8 +4,8 @@ load "lib/evmcmd_globals.rb"
 
 class ManagementSystems
 
-  def initialize (client)
-    @client = client
+  def initialize
+    @client = CFMEConnection.instance
   end
 
   ########################################################################################################################
@@ -31,7 +31,8 @@ class ManagementSystems
         puts "No records found"
       else
         output = AddHashToArray(response_hash[:item])
-        output.each { |key| showminimal("Category", "#{key[:category_display_name]}", "Tag", "#{key[:tag_display_name]}") }
+        puts output.inspect
+        output.each { |key| showminimal("Category", "#{key[:category]}", "Tag", "#{key[:tag_display_name]}") }
       end
     end
   end

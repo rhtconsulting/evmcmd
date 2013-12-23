@@ -1,13 +1,16 @@
 #!/usr/bin/env ruby
 
-########################################################################################################################
-def datastore_listall(*args)
-  login
-  message_title = "Datastore"
-  response = @client.request :get_datastore_list do
-    soap.body = { :emsGuid => "all" }
-  end
-  response_hash =  response.to_hash[:get_datastore_list_response][:return]
-  output = AddHashToArray(response_hash[:item])
-  output.each { |key| showminimal("ID", "#{key[:id]}", "#{message_title}", "#{key[:name]}") }
+class DataStore
+	def initialize
+		@client = CFMEConnection.instance
+	end
+
+	########################################################################################################################
+	def listall
+	  message_title = "Datastore"
+	  response = @client.call( :get_datastore_list, message: { emsGuid: "all" })
+	  response_hash =  response.to_hash[:get_datastore_list_response][:return]
+	  output = AddHashToArray(response_hash[:item])
+	  output.each { |key| showminimal("ID", "#{key[:id]}", "#{message_title}", "#{key[:name]}") }
+	end
 end

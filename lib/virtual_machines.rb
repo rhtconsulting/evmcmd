@@ -2,8 +2,8 @@
 
 class VirtualMachines
 
-  def initialize (client)
-    @client = client
+  def initialize
+    @client = CFMEConnection.instance
   end
 
   ########################################################################################################################

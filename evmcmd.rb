@@ -6,10 +6,13 @@ load "lib/management_systems.rb"
 load "lib/virtual_machines.rb"
 load "lib/hosts.rb"
 load "lib/clusters.rb"
+load "lib/datastores.rb"
+load "lib/resource_pools.rb"
 
 require 'readline'
 require 'savon'
 require 'rubygems'
+require 'yaml'
 
 #TODO: Savon 2.0 went away from this object .. we need to figure out how to configure things the new way.
 #Savon.configure do |config|
@@ -70,15 +73,31 @@ class EvmCmd
         ['exit', 'Get me out of here!'],
         ['quit', 'Get me out of here!']
       ].sort
-
+    
+    config = self.read_config
     # Instance variables for objects that we will be using ... probably needs refactoring after this...
-    @client = CFMEConnection.new
-    @client.login("192.168.0.3:4443", "admin", "smartvm")
-    @management_sytems = ManagementSystems.new(@client)
-    @virtualmachines = VirtualMachines.new(@client)
-    @host=Host.new(@client)
-    @cluster = Clusters.new(@client)
+    
+    @cfmehost = config["connection"]["host"] << ":" << config["connection"]["port"]
+    @cfmeuser = config["connection"]["user"]
+    @cfmepass = config["connection"]["pass"]
+    @cmdprompt = config["application"]["prompt"]
+    @client = CFMEConnection.instance
+    @client.login(@cfmehost, @cfmeuser, @cfmepass)
+    @management_sytems = ManagementSystems.new
+    @virtualmachines = VirtualMachines.new
+    @host = Host.new
+    @cluster = Clusters.new
+    @datastore = DataStore.new
+    @resourcepool = ResourcePool.new
   end  
+
+  def read_config
+    begin
+      return YAML.load_file("config.yaml")
+    rescue => exception
+      puts exception.message
+    end
+  end
 
   ########################################################################################################################
   def help ( cmd )
@@ -130,11 +149,19 @@ class EvmCmd
             self.version
           when "mgtsys_listall"
             @management_sytems.listall
+          when "mgtsys_details"
+            @management_sytems.details(run_arguments)
+          when "mgtsys_gettags"
+            @management_sytems.gettags(run_arguments)
+          when "datastore_listall"
+            @datastore.listall
+          when "resourcepool_listall"
+            @resourcepool.listall
           when "vm_list"
             @virtualmachines.listall
           when "vm_gettags"
             @virtualmachines.gettags(run_arguments)
-          when "host_list"
+          when "host_listall"
             @host.listall
           when "host_getvms"
             @host.getvms(run_arguments)
@@ -142,13 +169,17 @@ class EvmCmd
             @host.gettags(run_arguments)
           when "cluster_listall"
             @cluster.listall
+          when "evm_get"
+            puts @client.call(:evm_get, message: {token: "help"})
+          when "evm_ping"
+            puts @client.call(:evm_ping, nil)
           when "test"
             @evm_commands.each do |cmd|
               begin
                 puts "Executing Command: #{cmd}"
                 @client.call(cmd)
               rescue => exception
-                puts "Exception"
+                puts "Exception " << exception.message
               end
             end
           when "event_list"
@@ -165,10 +196,8 @@ class EvmCmd
             self.help(nil)
           else
             puts "Unrecognized command"
-            help
+            self.help(nil)
           end
-          #run_arguments = run_cmd.shift
-          #send(run_method, run_arguments)
         end
       end
     rescue => exception

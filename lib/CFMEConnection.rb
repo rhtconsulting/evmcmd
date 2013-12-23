@@ -1,7 +1,9 @@
 require 'savon'
+require 'singleton'
 
 class CFMEConnection
-
+	include Singleton
+	
 	def initialize
 		@host = nil
 		@port = nil

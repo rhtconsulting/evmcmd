@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 class Clusters
-	def initialize(client)
-		@client = client
+	def initialize
+		@client = CFMEConnection.instance
 	end
 
 	########################################################################################################################
