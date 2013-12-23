@@ -94,7 +94,10 @@ class EvmCmd
     config = self.read_config
     # Instance variables for objects that we will be using ... probably needs refactoring after this...
     
-    @cfmehost = config["connection"]["host"] << ":" << config["connection"]["port"]
+    @cfmehost = config["connection"]["host"] 
+    if config["connection"]["port"] != nil
+      @cfmehost = @cfmehost << ":" << config["connection"]["port"]
+    end
     @cfmeuser = config["connection"]["user"]
     @cfmepass = config["connection"]["pass"]
     @cmdprompt = config["application"]["prompt"]
