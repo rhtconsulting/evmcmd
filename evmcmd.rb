@@ -140,65 +140,14 @@ class EvmCmd
           run_cmd = line.split
           run_method = run_cmd.shift
           run_arguments = run_cmd.shift
-          case run_method
-          when "quit", "QUIT"
-            self.quit
-          when "exit", "EXIT"
-            self.exit
-          when "version"
-            self.version
-          when "mgtsys_listall"
-            @management_sytems.listall
-          when "mgtsys_details"
-            @management_sytems.details(run_arguments)
-          when "mgtsys_gettags"
-            @management_sytems.gettags(run_arguments)
-          when "datastore_listall"
-            @datastore.listall
-          when "resourcepool_listall"
-            @resourcepool.listall
-          when "vm_list"
-            @virtualmachines.listall
-          when "vm_gettags"
-            @virtualmachines.gettags(run_arguments)
-          when "host_listall"
-            @host.listall
-          when "host_getvms"
-            @host.getvms(run_arguments)
-          when "host_gettags"
-            @host.gettags(run_arguments)
-          when "cluster_listall"
-            @cluster.listall
-          when "evm_get"
-            puts @client.call(:evm_get, message: {token: "help"})
-          when "evm_ping"
-            puts @client.call(:evm_ping, nil)
-          when "test"
-            @evm_commands.each do |cmd|
-              begin
-                puts "Executing Command: #{cmd}"
-                @client.call(cmd)
-              rescue => exception
-                puts "Exception " << exception.message
-              end
-            end
-          when "event_list"
-            @client.call(:evm_event_list)
-          when "details"
-            if run_arguments != nil
-              @management_sytems.managementsystem_details(run_arguments)
-            else
-              puts self.help("managementsystem_details")
-            end
-          when "gettags"
-            @management_sytems.gettags(run_arguments)
-          when "help"
-            self.help(nil)
-          else
-            puts "Unrecognized command"
-            self.help(nil)
-          end
+          handle_call(run_method, run_arguments)
         end
+      else
+        run_cmd = arguments.split
+        run_method = run_cmd.shift
+        run_arguments = run_cmd.shift
+        puts "Running command #{run_method} arguments: #{run_arguments}"
+        handle_call(run_method, run_arguments)
       end
     rescue => exception
       puts exception.message
@@ -206,6 +155,73 @@ class EvmCmd
       run(arguments)
     end
   end
+
+  def handle_call( run_method, run_arguments)
+    begin
+      case run_method
+        when "quit", "QUIT"
+          self.quit
+        when "exit", "EXIT"
+          self.exit
+        when "version"
+          self.version
+        when "mgtsys_listall"
+          @management_sytems.listall
+        when "mgtsys_details"
+          @management_sytems.details(run_arguments)
+        when "mgtsys_gettags"
+          @management_sytems.gettags(run_arguments)
+        when "datastore_listall"
+          @datastore.listall
+        when "resourcepool_listall"
+          @resourcepool.listall
+        when "vm_list"
+          @virtualmachines.listall
+        when "vm_gettags"
+          @virtualmachines.gettags(run_arguments)
+        when "host_listall"
+          @host.listall
+        when "host_getvms"
+          @host.getvms(run_arguments)
+        when "host_gettags"
+          @host.gettags(run_arguments)
+        when "cluster_listall"
+          @cluster.listall
+        when "evm_get"
+          puts @client.call(:evm_get, message: {token: "help"})
+        when "evm_ping"
+          puts @client.call(:evm_ping, nil)
+        when "test"
+          @evm_commands.each do |cmd|
+            begin
+              puts "Executing Command: #{cmd}"
+              @client.call(cmd)
+            rescue => exception
+              puts "Exception " << exception.message
+            end
+          end
+        when "event_list"
+          @client.call(:evm_event_list)
+        when "details"
+          if run_arguments != nil
+            @management_sytems.managementsystem_details(run_arguments)
+          else
+            puts self.help("managementsystem_details")
+          end
+        when "gettags"
+          @management_sytems.gettags(run_arguments)
+        when "help"
+          self.help(nil)
+        else
+          puts "Unrecognized command"
+          self.help(nil)
+        end
+    rescue => exception
+      puts "Exception: " << exception.message
+      return
+    end
+  end
+
 
   ########################################################################################################################
   def quit
