@@ -207,15 +207,20 @@ class EvmCmd
           @host.gettags(run_arguments)
         when "cluster_listall"
           @cluster.listall
-        when "evm_get"
-          puts @client.call(:evm_get, message: {token: "help"})
+        when "evm_host_list"
+          #puts @client.call(:evm_get, message: {token: "5315b77e-3b7d-11e3-9546-525400975f77", uri: "https://#{@cfmehost}/vmdbws/wsdl"})
+          self.evm_host_list 
+        when "get_ems_list"
+          puts @client.call(:get_ems_list, nil)
         when "evm_ping"
           puts @client.call(:evm_ping, nil)
+        when "evm_resource_pool_list"
+          self.evm_resource_pool_list
         when "test"
           @evm_commands.each do |cmd|
             begin
               puts "Executing Command: #{cmd}"
-              @client.call(cmd)
+              puts @client.call(cmd, nil)
             rescue => exception
               puts "Exception " << exception.message
             end
@@ -238,6 +243,19 @@ class EvmCmd
     end
   end
 
+  def evm_host_list
+    response = @client.call(:evm_host_list, nil)
+    response_hash =  response.to_hash[:evm_host_list_response][:return]
+    output = AddHashToArray(response_hash[:item])
+    output.each { |key| showminimal("Name: ", "#{key[:name]}", "GUID: ", "#{key[:guid]}") }
+  end
+
+  def evm_resource_pool_list
+    response = @client.call(:evm_resource_pool_list, nil)
+    response_hash =  response.to_hash[:evm_resource_pool_list_response][:return]
+    output = AddHashToArray(response_hash[:item])
+    output.each { |key| showminimal("Name: ", "#{key[:name]}", "ID: ", "#{key[:id]}") }
+  end
 
   ########################################################################################################################
   def quit
