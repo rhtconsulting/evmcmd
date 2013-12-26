@@ -213,7 +213,9 @@ class EvmCmd
         when "get_ems_list"
           puts @client.call(:get_ems_list, nil)
         when "evm_ping"
-          puts @client.call(:evm_ping, nil)
+          self.evm_ping
+        when "evm_vm_software"
+          self.evm_vm_software(run_arguments)
         when "evm_resource_pool_list"
           self.evm_resource_pool_list
         when "test"
@@ -241,6 +243,20 @@ class EvmCmd
       puts "Exception: " << exception.message
       return
     end
+  end
+
+  def evm_ping
+    response = @client.call(:evm_ping, nil)
+    puts "hash"
+    response_hash =  response.to_hash[:evm_ping_response][:return]
+    puts("CFME Engine is up: #{response_hash}") 
+  end
+
+  def evm_vm_software(vmGuid)
+    response = @client.call(:evm_vm_software, message: {vmGuid: "#{vmGuid}"})
+    puts "hash"
+    response_hash =  response.to_hash[:evm_vm_software_response][:return]
+    puts("Response: #{response_hash}") 
   end
 
   def evm_host_list
