@@ -5,6 +5,7 @@
 # Application config items
 application:
    prompt: "evmcmd>"
+   instpath: "./"
 
 # Connection config items
 connection:
