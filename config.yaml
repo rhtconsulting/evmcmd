@@ -8,7 +8,7 @@ application:
 
 # Connection config items
 connection:
-   host: "192.168.0.3"
+   host: "192.168.1.72"
    port: "4443" # Use this in case the CFME engine is listening on another port
    user: "admin"
    pass: "smartvm"
