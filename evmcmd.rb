@@ -69,6 +69,9 @@ class EvmCmd
         'resourcepool_listall',
         'datastore_listall',
         'version',
+        'evm_ping',
+        'evm_host_list',
+        'evm_resource_pool_list',
         'help',
         'exit',
         'quit'].sort
@@ -86,9 +89,12 @@ class EvmCmd
         ['resourcepool_listall', 'List all the resource pools managed by the CFME Appliance'],
         ['datastore_listall', 'List all the Datastores managed by the CFME Appliance'],
         ['version', 'Get the CFME Appliance Version'],
+        ['evm_ping', 'Ping the CFME Appliance'],
+        ['evm_host_list', 'List all hosts managed by the CFME engine'],
+        ['evm_resource_pool_list', 'List all the resource pools managed by the CFME Appliance'],
         ['help [cmd]', 'Help me please!'],
         ['exit', 'Get me out of here!'],
-        ['quit', 'Get me out of here!']
+        ['quit', 'I want to quit! Get me out of here!']
       ].sort
     
     config = self.read_config
@@ -218,6 +224,8 @@ class EvmCmd
           self.evm_vm_software(run_arguments)
         when "evm_resource_pool_list"
           self.evm_resource_pool_list
+        when "evm_vm_accounts"
+          self.evm_vm_accounts
         when "test"
           @evm_commands.each do |cmd|
             begin
@@ -246,17 +254,18 @@ class EvmCmd
   end
 
   def evm_ping
-    response = @client.call(:evm_ping, nil)
-    puts "hash"
-    response_hash =  response.to_hash[:evm_ping_response][:return]
-    puts("CFME Engine is up: #{response_hash}") 
+    @client.evm_ping
   end
 
   def evm_vm_software(vmGuid)
-    response = @client.call(:evm_vm_software, message: {vmGuid: "#{vmGuid}"})
-    puts "hash"
-    response_hash =  response.to_hash[:evm_vm_software_response][:return]
-    puts("Response: #{response_hash}") 
+    if vmGuid == nil
+      puts "Error: The VM GUID is required."
+    else
+      response = @client.call(:evm_vm_software, message: {vmGuid: "#{vmGuid}"})
+      puts "hash"
+      response_hash =  response.to_hash[:evm_vm_software_response][:return]
+      puts("Response: #{response_hash}") 
+    end
   end
 
   def evm_host_list
@@ -271,6 +280,18 @@ class EvmCmd
     response_hash =  response.to_hash[:evm_resource_pool_list_response][:return]
     output = AddHashToArray(response_hash[:item])
     output.each { |key| showminimal("Name: ", "#{key[:name]}", "ID: ", "#{key[:id]}") }
+  end
+
+  def evm_vm_accounts
+    if vmGuid == nil
+      puts "Error: The VM GUID is required."
+    else
+      response = @client.call(:evm_vm_accounts, message: {GUID: "#{vmGuid}"})
+      puts response
+      response_hash =  response.to_hash[:evm_vm_accounts_response][:return]
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("Name: ", "#{key[:name]}", "ID: ", "#{key[:id]}") }
+    end
   end
 
   ########################################################################################################################

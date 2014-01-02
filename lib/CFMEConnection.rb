@@ -22,11 +22,9 @@ class CFMEConnection
 			@password = password
 
 			@url = "https://" << host << "/vmdbws/wsdl" 
-			puts "Connecting to #{@url} ..."
+			puts "Creating instance to #{@url} ..."
 			@client = Savon::client(wsdl: @url, ssl_verify_mode: :none, ssl_version: :SSLv3, basic_auth: [user,password], log: :false, pretty_print_xml: :true,
 				log_level: :error, raise_errors: :false, log: :false)
-			puts "Connected!"
-			@connected = true
 		rescue => exception
 			@connected = false
 			puts exception.message
@@ -41,6 +39,20 @@ class CFMEConnection
   				return @client.call(cmd)
   			end
   		end
+  	end
+
+	def evm_ping
+		begin
+		    response = self.call(:evm_ping, nil)
+		    response_hash =  response.to_hash[:evm_ping_response][:return]
+		    if response_hash == true
+		    	@connected = true
+		    	puts("CFME Engine is up: #{response_hash}") 
+		    end
+		rescue => exception
+		    	@connected = false
+		    	puts("CFME Engine is down: #{exception.message}") 
+		end
   	end
 
   	########################################################################################################################
