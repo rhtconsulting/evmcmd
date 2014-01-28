@@ -116,6 +116,7 @@ class EvmCmd
     @management_sytems = ManagementSystems.new
     @virtualmachines = VirtualMachines.new
     @host = Host.new
+    @findvms = FindVms.new
     @cluster = Clusters.new
     @datastore = DataStore.new
     @resourcepool = ResourcePool.new
