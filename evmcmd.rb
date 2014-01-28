@@ -4,6 +4,7 @@ $INSTALL_PATH="/Users/lesterclaudio/work/ruby-project/evmcmd"
 load "lib/CFMEConnection.rb"
 load "lib/management_systems.rb"
 load "lib/virtual_machines.rb"
+load "lib/findvms.rb"
 load "lib/hosts.rb"
 load "lib/clusters.rb"
 load "lib/datastores.rb"
@@ -42,9 +43,10 @@ class EvmCmd
       :evm_provision_request, :evm_provision_request_ex, :evm_host_provision_request, 
       :evm_vm_scan_by_property, :evm_vm_event_by_property, :get_ems_list, 
       :get_host_list, :get_cluster_list, :get_resource_pool_list, :get_datastore_list, 
-      :get_vm_list, :find_ems_by_guid, :find_hosts_by_guid, :find_host_by_guid, :find_clusters_by_id, 
-      :find_cluster_by_id, :find_datastores_by_id, :find_datastore_by_id, :find_resource_pools_by_id, 
-      :find_resource_pool_by_id, :find_vms_by_guid, :find_vm_by_guid, :get_ems_by_list, :get_hosts_by_list, 
+      :get_vm_list, :find_ems_by_guid, :find_hosts_by_guid, :find_host_by_guid, :find_clusters_by_id,
+      :findvms_bytag,
+      :find_cluster_by_id, :find_datastores_by_id, :find_datastore_by_id, :find_resource_pools_by_id,
+      :find_resource_pool_by_id, :find_vms_by_guid, :find_vm_by_guid, :get_ems_by_list, :get_hosts_by_list,
       :get_clusters_by_list, :get_datastores_by_list, :get_resource_pools_by_list, :get_vms_by_list, 
       :get_vms_by_tag, :get_templates_by_tag, :get_clusters_by_tag, :get_resource_pools_by_tag, :get_datastores_by_tag, 
       :vm_add_custom_attribute_by_fields, :vm_add_custom_attribute, :vm_add_custom_attributes, :vm_delete_custom_attribute, 
@@ -68,6 +70,7 @@ class EvmCmd
         'cluster_listall',
         'resourcepool_listall',
         'datastore_listall',
+        'findvms_bytag',
         'version',
         'evm_ping',
         'evm_host_list',
@@ -83,6 +86,7 @@ class EvmCmd
         ['host_gettags', 'Get all the tags defined for a specific host in the CFME Appliance'],
         ['host_getvms', 'Get all the VMs that are managed by the CFME Appliance'],
         ['vm_listall', 'List all the Virtual Machines managed by the CFME Appliance'],
+        ['findvms_bytags', 'Find VMs by Tag'],
         ['vm_gettags', 'Get all the tags for a Virtual Machine'],
         ['vm_details', 'Retrieve the Virtual Machine details'],
         ['cluster_listall', 'List all the Clusters managed by the CFME Appliance'],
@@ -209,6 +213,8 @@ class EvmCmd
           @host.listall
         when "host_getvms"
           @host.getvms(run_arguments)
+        when "findvms_bytag"
+          @findvms.bytag(run_arguments)
         when "host_gettags"
           @host.gettags(run_arguments)
         when "cluster_listall"
