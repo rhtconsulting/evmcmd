@@ -4,6 +4,7 @@ $INSTALL_PATH="/Users/lesterclaudio/work/ruby-project/evmcmd"
 load "lib/CFMEConnection.rb"
 load "lib/management_systems.rb"
 load "lib/virtual_machines.rb"
+load "lib/automationreq.rb"
 load "lib/findvms.rb"
 load "lib/hosts.rb"
 load "lib/clusters.rb"
@@ -44,7 +45,7 @@ class EvmCmd
       :evm_vm_scan_by_property, :evm_vm_event_by_property, :get_ems_list, 
       :get_host_list, :get_cluster_list, :get_resource_pool_list, :get_datastore_list, 
       :get_vm_list, :find_ems_by_guid, :find_hosts_by_guid, :find_host_by_guid, :find_clusters_by_id,
-      :findvms_bytag,
+      :findvms_bytag, :automationreq_create,
       :find_cluster_by_id, :find_datastores_by_id, :find_datastore_by_id, :find_resource_pools_by_id,
       :find_resource_pool_by_id, :find_vms_by_guid, :find_vm_by_guid, :get_ems_by_list, :get_hosts_by_list,
       :get_clusters_by_list, :get_datastores_by_list, :get_resource_pools_by_list, :get_vms_by_list, 
@@ -58,6 +59,7 @@ class EvmCmd
 
     @command = nil 
     @LIST = [
+        'automationreq_create',
         'mgtsys_listall',
         'mgtsys_gettags',
         'mgtsys_details',
@@ -79,6 +81,7 @@ class EvmCmd
         'exit',
         'quit'].sort
     @list = [
+        ['automationreq_create', 'Create Automation Request'],
         ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
         ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
         ['mgtsys_details', 'Get all the details from the CFME Appliance'],
@@ -117,6 +120,7 @@ class EvmCmd
     @virtualmachines = VirtualMachines.new
     @host = Host.new
     @findvms = FindVms.new
+    @automationreq = AutomationRequest.new
     @cluster = Clusters.new
     @datastore = DataStore.new
     @resourcepool = ResourcePool.new
@@ -214,6 +218,8 @@ class EvmCmd
           @host.listall
         when "host_getvms"
           @host.getvms(run_arguments)
+        when "automationreq_create"
+          @automationreq.create(run_arguments)
         when "findvms_bytag"
           @findvms.bytag(run_arguments)
         when "host_gettags"
