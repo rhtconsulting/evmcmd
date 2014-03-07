@@ -29,6 +29,54 @@ class VirtualMachines
     end
   end
 
+
+  def printout(vm_details,host_details,cluster_details,rp_details)
+#    puts vm_details.inspect
+#    puts host_details.inspect
+#    puts cluster_details.inspect
+    @msg_details = { :vm_details => vm_details }
+    @msg_details.merge!(:host_details => host_details)
+    @msg_details.merge!(:cluster_details => cluster_details)
+    @msg_details.merge!(:rp_details => rp_details)
+    vm_wsinfo = extractHashes(@msg_details[:vm_details][:ws_attributes][:item])
+    print   "Properties:\n",
+#            "\tID:\t\t\t\t#{@msg_details[:vm_details][:id]}\n",
+            "\tVM GUID:\t\t\t#{@msg_details[:vm_details][:guid]}\n",
+            "\tEMS ID:\t\t\t\t#{@msg_details[:vm_details][:ems_id]}\n",
+            "\tName:\t\t\t\t#{@msg_details[:vm_details][:name]}\n",
+            "\tHostname:\t\t\t#{vm_wsinfo[:hostnames]}\n",
+            "\tIP Address:\t\t\t#{vm_wsinfo[:ipaddresses].to_s}\n",
+            "\tContainer:\t\t\t#{@msg_details[:vm_details][:vendor]} (#{@msg_details[:vm_details][:hardware][:numvcpus].to_i} CPUs, #{@msg_details[:vm_details][:hardware][:memory_cpu].to_i} MB)\n",
+            "\tParent Host Platform:\t\t#{vm_wsinfo[:v_host_vmm_product]}\n",
+            "\tPlatform Tools:\t\t\t#{@msg_details[:vm_details][:tools_status]}\n",
+            "\tOperating System:\t\t#{@msg_details[:vm_details][:hardware][:guest_os_full_name]}\n",
+            "\tCPU Affinity:\t\t#{@msg_details[:vm_details][:cpu_affinity]}\n",
+            "\tSnapshots:\t\t\t#{vm_wsinfo[:v_total_snapshots]}\n",
+            "\nLifecycle:\n",
+            "\tDiscovered:\t\t\t#{@msg_details[:vm_details][:created_on]}\n",
+            "\tLast Analyzed:\t\t\t#{@msg_details[:vm_details][:last_scan_on]}\n",
+            "\nRelationships:\n",
+                          "\tInfrastructure Provider:\t#{@msg_details[:vm_details][:ext_management_system][:name]}\n",
+                          "\tCluster:\t\t\t#{@msg_details[:cluster_details][:name]}\n",
+                          "\tHost:\t\t\t\t#{@msg_details[:host_details][:name]}\n",
+                          "\tResource Pool:\t\t\t#{@msg_details[:rp_details][:name]}\n",
+            "\tDatastores:\t\t\t#{@msg_details[:vm_details][:datastores][:item][:name]}\n",
+            "\nCompliance:\n",
+            "\tStatus:\t\t\t\t#{vm_wsinfo[:last_compliance_status]}\n",
+            "\tHistory:\t\t\t#{vm_wsinfo[:last_compliance_timestamp]}\n",
+            "\nPower Management:\n",
+            "\tPower State:\t\t\t#{@msg_details[:vm_details][:power_state]}\n",
+            "\tLast Boot Time:\t\t\t#{@msg_details[:vm_details][:boot_time]}\n",
+            "\tState Change On:\t\t#{@msg_details[:vm_details][:state_changed_on]}\n",
+            "\nDatastore Allocation Summary:\n",
+            "\tNumber of Disks:\t\t#{vm_wsinfo[:num_disks]}\n",
+            "\tDisks Aligned:\t\t\t#{vm_wsinfo[:disks_aligned]}\n",
+            "\tThin Provisioning Used:\t\t#{vm_wsinfo[:disk_1_disk_type]}\n",
+            "\tDisks:\t\t\t\t#{vm_wsinfo[:disk_1_size]}\n",
+            "\tMemory:\t\t\t\t#{@msg_details[:vm_details][:hardware][:memory_cpu].to_i / 1024} GB\n",
+           ""
+  end
+
   ########################################################################################################################
   def details(vmGuid)
     if vmGuid == nil
@@ -37,48 +85,25 @@ class VirtualMachines
       #h = splitOpts(args[0])
       #vmGuid = h['vmGuid']
       #login
-      response = @client.call(:find_vm_by_guid, message: {vmGuid: "#{vmGuid}"})
-      response_hash =  response.to_hash[:find_vm_by_guid_response][:return]
-      output = AddHashToArray(response_hash)
-      output.each {|key|    wsinfo = extractHashes(key[:ws_attributes][:item])
-      total_memory = wsinfo[:aggregate_memory].to_f / 1024
-      print   "Properties:\n",
-                "\tID:\t\t\t\t#{key[:id]}\n",
-                "\tName:\t\t\t\t#{key[:name]}\n",
-                "\tManagement Engine GUID:\t\t#{key[:guid]}\n",
-                "\tServer:\t\t\t\t#{key[:ems_id]}\n",
-                "\tHost:\t\t\t\t#{wsinfo[:hostnames]}\n",
-                "\tIP Address:\t\t\t#{wsinfo[:ipaddresses]}\n",
-                "\tContainer:\t\t\t#{key[:vendor]} (#{key[:hardware][:numvcpus].to_i} CPUs, #{key[:hardware][:memory_cpu].to_i} MB)\n",
-                "\tParent Host Platform:\t\t#{wsinfo[:v_host_vmm_product]}\n",
-                "\tPlatform Tools:\t\t\t#{key[:tools_status]}\n",
-                "\tOperating System:\t\t#{key[:hardware][:guest_os_full_name]}\n",
-                "\tSnapshots:\t\t\t#{wsinfo[:v_total_snapshots]}\n",
-                "\nLifecycle:\n",
-                "\tDiscovered:\t\t\t#{key[:created_on]}\n",
-                "\tLast Analyzed:\t\t\t#{key[:last_scan_on]}\n",
-                "\nRelationships:\n",
-                "\tInfrastructure Provider:\t#{key[:ext_management_system][:name]}\n",
-                "\tCluster:\t\t\t#{key[:parent_cluster][:name]}\n",
-                "\tHost:\t\t\t\t#{key[:host][:name]}\n",
-                "\tResource Pool:\t\t\t#{key[:parent_resource_pool][:name]}\n",
-                "\tDatastores:\t\t\t#{key[:datastores][:name]}\n",
-                "\nCompliance:\n",
-                "\tStatus:\t\t\t\t#{wsinfo[:last_compliance_status]}\n",
-                "\tHistory:\t\t\t#{wsinfo[:last_compliance_timestamp]}\n",
-                "\nPower Management:\n",
-                "\tPower State:\t\t\t#{key[:power_state]}\n",
-                "\tLast Boot Time:\t\t\t#{key[:boot_time]}\n",
-                "\tState Change On:\t\t#{key[:state_changed_on]}\n",
-                "\nDatastore Allocation Summary:\n",
-                "\tNumber of Disks:\t\t#{wsinfo[:num_disks]}\n",
-                "\tDisks Aligned:\t\t\t#{wsinfo[:disks_aligned]}\n",
-                "\tThin Provisioning Used:\t\t#{wsinfo[:disk_1_disk_type]}\n",
-                "\tDisks:\t\t\t\t#{wsinfo[:disk_1_size]}\n",
-                "\tMemory:\t\t\t\t#{key[:hardware][:memory_cpu].to_i / 1024} GB\n",
-
-                ""
+      vm = @client.call(:find_vm_by_guid, message: {vmGuid: "#{vmGuid}"})
+      vm_hash =  vm.to_hash[:find_vm_by_guid_response][:return]
+      vm_details = AddHashToArray(vm_hash)
+      vm_details.each { |vm|
+        @hostGuid = vm[:host][:guid]
+        @clusterId = vm[:parent_cluster][:id]
+        @resourcepoolId = vm[:parent_resource_pool][:id]
       }
+      host = @client.call(:find_host_by_guid, message: {hostGuid: "#{@hostGuid}"})
+      host_hash =  host.to_hash[:find_host_by_guid_response][:return]
+      host_details = AddHashToArray(host_hash)
+      cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{@clusterId}"})
+      cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
+      cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{@clusterId}"})
+      cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
+      resourcepool = @client.call(:find_resource_pool_by_id, message: {resourcepoolId: "#{@resourcepoolId}"})
+      resourcepool_hash =  resourcepool.to_hash[:find_resource_pool_by_id_response][:return]
+      printout(vm_hash,host_hash,cluster_hash,resourcepool_hash)
     end
   end
+
 end

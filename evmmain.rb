@@ -17,12 +17,19 @@ install_path = config["application"]["instpath"]
 load "#{install_path}evmcmd.rb"
 
 # Create a new instance of the class EvmCmd.  No parameters to pass.
-myCmd = EvmCmd.new
-
-arguments = ""
-ARGV.each do |a|
-  arguments += "#{a} "
+class RunCmd
+  def self.int(vars)
+    myCmd = EvmCmd.new
+    output = myCmd.run(vars)
+  end
+  def self.run(cmdargs)
+      myCmd = EvmCmd.new
+        arguments = ""
+        cmdargs.each do |a|
+          arguments += "#{a} "
+        end
+        myCmd.run(arguments.to_s)
+  end
 end
 
-myCmd.run(arguments)
-
+RunCmd.run(ARGV)

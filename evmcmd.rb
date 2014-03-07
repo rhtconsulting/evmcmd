@@ -25,7 +25,6 @@ require 'yaml'
 #  HTTPI.log = false
 #end
 
-
 class EvmCmd  
   def initialize   
     # Instance variables
@@ -212,16 +211,22 @@ class EvmCmd
           @resourcepool.listall
         when "vm_listall"
           @virtualmachines.listall
+        when "vm_details"
+          @virtualmachines.details(run_arguments)
         when "vm_gettags"
           @virtualmachines.gettags(run_arguments)
         when "host_listall"
           @host.listall
+        when "vm_getname"
+          @virtualmachines.getname(run_arguments)
         when "host_getvms"
           @host.getvms(run_arguments)
         when "automationreq_create"
           @automationreq.create(run_arguments)
         when "findvms_bytag"
           @findvms.bytag(run_arguments)
+        when "getvars"
+          @getvars.name(guid_id)
         when "host_gettags"
           @host.gettags(run_arguments)
         when "cluster_listall"
