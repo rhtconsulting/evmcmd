@@ -23,13 +23,10 @@ class Host
       puts "Error, you must specify hostGuid"
     else
       message_title = "Host"
-      puts "Before call ..."
-      response = @client.call( :evm_get_vms, message: {hostGuid: "#{hostGuid}"})
-        ##soap.body = { :hostGuid => "294a86b4-3b54-11e3-97a2-005056b367d4" }
-      puts "response received ..."
-      response_hash =  response.object[:evm_get_vms_response][:return]
-      puts "response hashed ..."
-      response_hash[:item].each { |key| showminimal("ID", "#{key[:id]}") }
+      response = @client.call(:evm_vm_list, message: {hostGuid: "#{hostGuid}"})
+      response_hash =  response.to_hash[:evm_vm_list_response][:return]
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("GUID", "#{key[:guid]}", "VM", "#{key[:name]}") }
     end
   end
 
