@@ -4,7 +4,6 @@ load "lib/CFMEConnection.rb"
 load "lib/management_systems.rb"
 load "lib/virtual_machines.rb"
 load "lib/automationreq.rb"
-load "lib/findvms.rb"
 load "lib/hosts.rb"
 load "lib/clusters.rb"
 load "lib/datastores.rb"
@@ -108,7 +107,6 @@ class EvmCmd
     @management_sytems = ManagementSystems.new
     @virtualmachines = VirtualMachines.new
     @host = Host.new
-    @findvms = FindVms.new
     @automationreq = AutomationRequest.new
     @cluster = Clusters.new
     @datastore = DataStore.new
@@ -197,6 +195,14 @@ class EvmCmd
           @management_sytems.gettags(run_arguments)
         when "datastore_listall"
           @datastore.listall
+        when "datastore_getvms"
+          @datastore.getvms(run_arguments)
+        when "datastore_bytag"
+          @datastore.bytag(run_arguments)
+        when "datastore_gethosts"
+          @datastore.gethosts(run_arguments)
+        when "datastore_getmgtsys"
+          @datastore.getmgtsys(run_arguments)
         when "resourcepool_listall"
           @resourcepool.listall
         when "vm_listall"
@@ -205,22 +211,32 @@ class EvmCmd
           @virtualmachines.details(run_arguments)
         when "vm_gettags"
           @virtualmachines.gettags(run_arguments)
+        when "vm_bytag"
+          @virtualmachines.bytag(run_arguments)
         when "host_listall"
           @host.listall
-        when "vm_getname"
-          @virtualmachines.getname(run_arguments)
-        when "host_getvms"
-          @host.getvms(run_arguments)
-        when "automationreq_create"
-          @automationreq.create(run_arguments)
-        when "findvms_bytag"
-          @findvms.bytag(run_arguments)
-        when "getvars"
-          @getvars.name(guid_id)
         when "host_gettags"
           @host.gettags(run_arguments)
+        when "host_getvms"
+          @host.getvms(run_arguments)
+        when "host_details"
+          @host.details(run_arguments)
+        when "vm_getname"
+          @virtualmachines.getname(run_arguments)
+        when "automationreq_create"
+          @automationreq.create(run_arguments)
+        when "getvars"
+          @getvars.name(guid_id)
         when "cluster_listall"
           @cluster.listall
+        when "cluster_getvms"
+          @cluster.getvms(run_arguments)
+        when "cluster_bytag"
+          @cluster.bytag(run_arguments)
+        when "cluster_gethosts"
+          @cluster.gethosts(run_arguments)
+        when "cluster_getmgtsys"
+          @cluster.getmgtsys(run_arguments)
         when "evm_host_list"
           #puts @client.call(:evm_get, message: {token: "5315b77e-3b7d-11e3-9546-525400975f77", uri: "https://#{@cfmehost}/vmdbws/wsdl"})
           self.evm_host_list 

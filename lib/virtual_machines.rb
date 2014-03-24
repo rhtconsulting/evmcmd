@@ -30,6 +30,7 @@ class VirtualMachines
   end
 
 
+  ########################################################################################################################
   def printout(vm_details,host_details,cluster_details,rp_details)
 #    puts vm_details.inspect
 #    puts host_details.inspect
@@ -98,12 +99,21 @@ class VirtualMachines
       host_details = AddHashToArray(host_hash)
       cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{@clusterId}"})
       cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
-      cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{@clusterId}"})
-      cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
       resourcepool = @client.call(:find_resource_pool_by_id, message: {resourcepoolId: "#{@resourcepoolId}"})
       resourcepool_hash =  resourcepool.to_hash[:find_resource_pool_by_id_response][:return]
       printout(vm_hash,host_hash,cluster_hash,resourcepool_hash)
     end
   end
 
+  ########################################################################################################################
+  def bytag(tag)
+    if tag == nil
+      puts "Error: The Tag is required."
+    else
+      response = @client.call(:get_vms_by_tag, message: {tag: "#{tag}"})
+      response_hash =  response.to_hash[:get_vms_by_tag_response][:return]
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| puts "GUID: #{key[:guid]}\t Name: #{key[:name]}" }
+    end
+  end
 end

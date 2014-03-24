@@ -13,5 +13,55 @@ class Clusters
 	  response_hash =  response.to_hash[:get_cluster_list_response][:return]
 	  output = AddHashToArray(response_hash[:item])
 	  output.each { |key| showminimal("ID", "#{key[:id]}", "#{message_title}", "#{key[:name]}") }
-	end
+  end
+
+  #####################################################################################
+  def getvms(id)
+    if id == nil
+      puts "Error, you must specify guid"
+    else
+      message_title = "Cluster"
+      response = @client.call(:find_cluster_by_id, message: {clusterId: "#{id}"})
+      response_hash =  response.to_hash[:find_cluster_by_id_response][:return][:vms]
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("GUID", "#{key[:guid]}", "VM", "#{key[:name]}") }
+    end
+  end
+
+  #####################################################################################
+  def gethosts(id)
+    if id == nil
+      puts "Error, you must specify guid"
+    else
+      message_title = "Datastore"
+      response = @client.call(:find_cluster_by_id, message: {clusterId: "#{id}"})
+      response_hash =  response.to_hash[:find_cluster_by_id_response][:return][:hosts]
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("GUID", "#{key[:guid]}", "Host", "#{key[:name]}") }
+    end
+  end
+
+  #####################################################################################
+  def getmgtsys(id)
+    if id == nil
+      puts "Error, you must specify guid"
+    else
+      message_title = "Datastore"
+      response = @client.call(:find_cluster_by_id, message: {clusterId: "#{id}"})
+      response_hash =  response.to_hash[:find_cluster_by_id_response][:return][:ext_management_system]
+      showminimal("GUID", "#{response_hash[:guid]}", "EVM", "#{response_hash[:name]}")
+    end
+  end
+
+  ########################################################################################################################
+  def bytag(tag)
+    if tag == nil
+      puts "Error: The Tag is required."
+    else
+      response = @client.call(:get_clusters_by_tag, message: {tag: "#{tag}"})
+      response_hash =  response.to_hash[:get_clusters_by_tag_response][:return]
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| puts "ID: #{key[:id]}\t Cluster: #{key[:name]}" }
+    end
+  end
 end
