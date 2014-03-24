@@ -168,7 +168,7 @@ class EvmCmd
     puts @client.ems_version
   end
 
-  def run (arguments) 
+  def run (arguments)
     begin
       comp = proc { |s| @LIST.grep(/^#{Regexp.escape(s)}/) }
 
@@ -183,11 +183,11 @@ class EvmCmd
           handle_call(run_method, run_arguments)
         end
       else
-        run_cmd = arguments.split
-        run_method = run_cmd.shift
-        run_arguments = run_cmd.shift
+        run_cmd = arguments['-x']
+        run_method = arguments['-x']
+        run_arguments = arguments
         puts "Running command #{run_method} arguments: #{run_arguments}"
-        handle_call(run_method, run_arguments)
+        handle_call(arguments['-x'], run_arguments)
       end
     rescue => exception
       puts exception.message
@@ -196,7 +196,7 @@ class EvmCmd
     end
   end
 
-  def handle_call( run_method, run_arguments)
+  def handle_call(run_method, run_arguments)
     begin
       case run_method
         when "quit", "QUIT"
@@ -239,6 +239,8 @@ class EvmCmd
           @host.getvms(run_arguments)
         when "host_details"
           @host.details(run_arguments)
+        when "host_getmgtsys"
+          @host.getmgtsys(run_arguments)
         when "vm_getname"
           @virtualmachines.getname(run_arguments)
         when "automationreq_create"

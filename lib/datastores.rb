@@ -15,12 +15,18 @@ class DataStore
   end
 
   #####################################################################################
-  def getvms(id)
-    if id == nil
-      puts "Error, you must specify guid"
+  def getvms(args)
+    OptionParser.new do |o|
+      o.on('-i ID') { |id| $id = id }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $id == nil
+      puts "Error, you must specify -i ID  with a value"
     else
       message_title = "Datastore"
-      response = @client.call(:find_datastore_by_id, message: {datastoreId: "#{id}"})
+      response = @client.call(:find_datastore_by_id, message: {datastoreId: "#{$id}"})
       response_hash =  response.to_hash[:find_datastore_by_id_response][:return][:vms]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| showminimal("GUID", "#{key[:guid]}", "VM", "#{key[:name]}") }
@@ -28,12 +34,18 @@ class DataStore
   end
 
   #####################################################################################
-  def gethosts(id)
-    if id == nil
-      puts "Error, you must specify guid"
+  def gethosts(args)
+    OptionParser.new do |o|
+      o.on('-i ID') { |id| $id = id }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $id == nil
+      puts "Error, you must specify -i ID  with a value"
     else
       message_title = "Datastore"
-      response = @client.call(:find_datastore_by_id, message: {datastoreId: "#{id}"})
+      response = @client.call(:find_datastore_by_id, message: {datastoreId: "#{$id}"})
       response_hash =  response.to_hash[:find_datastore_by_id_response][:return][:hosts]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| showminimal("GUID", "#{key[:guid]}", "Host", "#{key[:name]}") }
@@ -41,12 +53,18 @@ class DataStore
   end
 
   #####################################################################################
-  def getmgtsys(id)
-    if id == nil
-      puts "Error, you must specify guid"
+  def getmgtsys(args)
+    OptionParser.new do |o|
+      o.on('-i ID') { |id| $id = id }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $id == nil
+      puts "Error, you must specify -i ID  with a value"
     else
       message_title = "Datastore"
-      response = @client.call(:find_datastore_by_id, message: {datastoreId: "#{id}"})
+      response = @client.call(:find_datastore_by_id, message: {datastoreId: "#{$id}"})
       response_hash =  response.to_hash[:find_datastore_by_id_response][:return][:ext_management_systems]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| showminimal("GUID", "#{key[:guid]}", "EVM", "#{key[:name]}") }
@@ -55,10 +73,15 @@ class DataStore
 
   ########################################################################################################################
   def bytag(tag)
-    if tag == nil
-      puts "Error: The Tag is required."
+    OptionParser.new do |o|
+      o.on('-t TAG') { |tag| $tag = tag }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+    if $tag == nil
+      puts "Error: The -t category/category_name is required."
     else
-      response = @client.call(:get_datastores_by_tag, message: {tag: "#{tag}"})
+      response = @client.call(:get_datastores_by_tag, message: {tag: "#{$tag}"})
       response_hash =  response.to_hash[:get_datastores_by_tag_response][:return]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| puts "ID: #{key[:id]}\t Datastore: #{key[:name]}" }

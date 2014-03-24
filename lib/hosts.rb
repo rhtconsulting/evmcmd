@@ -17,13 +17,18 @@ class Host
   end
 
   #####################################################################################
-  def getvms(hostGuid)
-    #login
-    if hostGuid == nil
-      puts "Error, you must specify hostGuid"
+  def getvms(args)
+    OptionParser.new do |o|
+      o.on('-g GUID') { |guid| $guid = guid }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $guid == nil
+      puts "Error, you must specify -g GUID  with a value"
     else
       message_title = "Host"
-      response = @client.call(:evm_vm_list, message: {hostGuid: "#{hostGuid}"})
+      response = @client.call(:evm_vm_list, message: {hostGuid: "#{$guid}"})
       response_hash =  response.to_hash[:evm_vm_list_response][:return]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| showminimal("GUID", "#{key[:guid]}", "VM", "#{key[:name]}") }
@@ -31,14 +36,20 @@ class Host
   end
 
   ########################################################################################################################
-  def gettags(hostGuid)
-    if hostGuid == nil
-      puts "Error, you must specify hostGuid"
+  def gettags(args)
+    OptionParser.new do |o|
+      o.on('-g GUID') { |guid| $guid = guid }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $guid == nil
+      puts "Error, you must specify -g GUID  with a value"
     else
       #h = splitOpts(args[0])
       #guid = h['hostGuid']
       #login
-      response = @client.call(:host_get_tags, message: {hostGuid: "#{hostGuid}"})
+      response = @client.call(:host_get_tags, message: {hostGuid: "#{$guid}"})
       response_hash =  response.to_hash[:host_get_tags_response][:return]
       if response_hash[:item] == nil
         puts "No records found"
@@ -50,16 +61,19 @@ class Host
   end
 
   #####################################################################################
-  def getmgtsys(id)
-    if id == nil
-      puts "Error, you must specify guid"
+  def getmgtsys(args)
+    OptionParser.new do |o|
+      o.on('-g GUID') { |guid| $guid = guid }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $guid == nil
+      puts "Error, you must specify -g GUID  with a value"
     else
-      response = @client.call(:find_host_by_guid, message: {hostGuid: "#{id}"})
-      puts response.inspect
+      response = @client.call(:find_host_by_guid, message: {hostGuid: "#{$guid}"})
       response_hash =  response.to_hash[:find_host_by_guid_response][:return][:ext_management_system]
-      puts response_hash.inspect
-      output = AddHashToArray(response_hash[:item])
-      output.each { |key| showminimal("GUID", "#{key[:guid]}", "EVM", "#{key[:name]}") }
+      showminimal("GUID", "#{response_hash[:guid]}", "EVM", "#{response_hash[:name]}")
     end
   end
 
@@ -133,11 +147,17 @@ class Host
 
 
   ########################################################################################################################
-  def details(id)
-    if id == nil
-      puts "Error, you must specify guid or name with a value"
+  def details(args)
+    OptionParser.new do |o|
+      o.on('-g GUID') { |guid| $guid = guid }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $guid == nil
+      puts "Error, you must specify -g GUID  with a value"
     else
-      host = @client.call(:find_host_by_guid, message: {hostGuid: "#{id}"})
+      host = @client.call(:find_host_by_guid, message: {hostGuid: "#{$guid}"})
       host_hash =  host.to_hash[:find_host_by_guid_response][:return]
       host_details = AddHashToArray(host_hash)
       host_details.each { |host|

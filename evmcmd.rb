@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
-
 require 'yaml'
+require 'optparse'
 
 def read_config
     begin
@@ -23,12 +23,21 @@ class RunCmd
     output = myCmd.run(vars)
   end
   def self.run(cmdargs)
-      myCmd = EvmCmd.new
-        arguments = ""
-        cmdargs.each do |a|
-          arguments += "#{a} "
-        end
-        myCmd.run(arguments.to_s)
+    myCmd = EvmCmd.new
+    cmd = {'-x'=>"#{cmdargs[0]}"}
+    puts cmd.inspect
+    if cmdargs.count == 1
+      puts cmdargs.count.inspect
+      cmd.merge!(:args => false)
+      puts cmd.inspect
+      myCmd.run(cmd)
+    else
+      cmdargs.delete(cmdargs[0])
+      arguments = Hash[*cmdargs.flatten]
+      cmd.merge!(:args => true)
+      cmd.merge!(arguments)
+      myCmd.run(cmd)
+    end
   end
 end
 

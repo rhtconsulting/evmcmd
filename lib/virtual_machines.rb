@@ -15,14 +15,16 @@ class VirtualMachines
   end
 
   ########################################################################################################################
-  def gettags(vmGuid)
-    if vmGuid == nil
-      puts "Error, you must specify ID or name with a value"
+  def gettags(args)
+    OptionParser.new do |o|
+      o.on('-g GUID') { |guid| $guid = guid }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+    if $guid == nil
+      puts "Error, you must specify -g GUID or name with a value"
     else
-      #h = splitOpts(args[0])
-      #vmGuid = h['vmGuid']
-      #login
-      response = @client.call(:vm_get_tags, message: {vmGuid: "#{vmGuid}"})
+      response = @client.call(:vm_get_tags, message: {vmGuid: "#{$guid}"})
       response_hash =  response.to_hash[:vm_get_tags_response][:return]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| showminimal("Category", "#{key[:category]}", "Tag", "#{key[:tag_display_name]}") }
@@ -79,14 +81,17 @@ class VirtualMachines
   end
 
   ########################################################################################################################
-  def details(vmGuid)
-    if vmGuid == nil
-      puts "Error, you must specify vmGuid or name with a value"
+  def details(args)
+    OptionParser.new do |o|
+      o.on('-g GUID') { |guid| $guid = guid }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $guid == nil
+      puts "Error, you must specify -g GUID  with a value"
     else
-      #h = splitOpts(args[0])
-      #vmGuid = h['vmGuid']
-      #login
-      vm = @client.call(:find_vm_by_guid, message: {vmGuid: "#{vmGuid}"})
+      vm = @client.call(:find_vm_by_guid, message: {vmGuid: "#{$guid}"})
       vm_hash =  vm.to_hash[:find_vm_by_guid_response][:return]
       vm_details = AddHashToArray(vm_hash)
       vm_details.each { |vm|
@@ -106,11 +111,17 @@ class VirtualMachines
   end
 
   ########################################################################################################################
-  def bytag(tag)
-    if tag == nil
-      puts "Error: The Tag is required."
+  def bytag(args)
+    OptionParser.new do |o|
+      o.on('-t TAG') { |tag| $tag = tag }
+      o.on('-h') { puts o; exit }
+      o.parse!
+    end
+
+    if $tag == nil
+      puts "Error: The -t category/category_name is required."
     else
-      response = @client.call(:get_vms_by_tag, message: {tag: "#{tag}"})
+      response = @client.call(:get_vms_by_tag, message: {tag: "#{$tag}"})
       response_hash =  response.to_hash[:get_vms_by_tag_response][:return]
       output = AddHashToArray(response_hash[:item])
       output.each { |key| puts "GUID: #{key[:guid]}\t Name: #{key[:name]}" }
