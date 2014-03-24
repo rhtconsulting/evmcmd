@@ -9,33 +9,33 @@ Savon 2.0 or higher
 
 Usage
 -----
-evmcmd host_listall
-evmcmd host_gettags 29344dcc-3b54-11e3-97a2-005056b367d4
-evmcmd vm_listall
-evmcmd vm_gettags 2a4765fa-3b54-11e3-97a2-005056b367d4
-evmcmd vm_details 2a4765fa-3b54-11e3-97a2-005056b367d4
-evmcmd cluster_listall
-evmcmd resourcepool_listall
-evmcmd datastore_listall
-evmcmd version
+evmcmd host_listall    
+evmcmd host_gettags 29344dcc-3b54-11e3-97a2-005056b367d4    
+evmcmd vm_listall    
+evmcmd vm_gettags 2a4765fa-3b54-11e3-97a2-005056b367d4    
+evmcmd vm_details 2a4765fa-3b54-11e3-97a2-005056b367d4    
+evmcmd cluster_listall    
+evmcmd resourcepool_listall    
+evmcmd datastore_listall    
+evmcmd version    
 
 Or alternatively by running the evmcmd itself to bring up the prompt to the run the same tests above but without evmcmd
 in from
 
-evmcmd> mgtsys_listall
-evmcmd> mgtsys_gettags 02f0f85e-3b54-11e3-bce6-005056b367d4
-evmcmd> mgtsys_settags 02f0f85e-3b54-11e3-bce6-005056b367d4 department accounting
-evmcmd> mgtsys_details 02f0f85e-3b54-11e3-bce6-005056b367d4
-evmcmd> cluster_listall
-evmcmd> host_listall
-evmcmd> host_gettags 29344dcc-3b54-11e3-97a2-005056b367d4
-evmcmd> vm_listall
-evmcmd> vm_gettags vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4
-evmcmd> vm_details vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4
-evmcmd> cluster_listall
-evmcmd> resourcepool_listall
-evmcmd> datastore_listall
-evmcmd> version
+evmcmd> mgtsys_listall    
+evmcmd> mgtsys_gettags 02f0f85e-3b54-11e3-bce6-005056b367d4    
+evmcmd> mgtsys_settags 02f0f85e-3b54-11e3-bce6-005056b367d4 department accounting    
+evmcmd> mgtsys_details 02f0f85e-3b54-11e3-bce6-005056b367d4    
+evmcmd> cluster_listall    
+evmcmd> host_listall    
+evmcmd> host_gettags 29344dcc-3b54-11e3-97a2-005056b367d4    
+evmcmd> vm_listall    
+evmcmd> vm_gettags vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4    
+evmcmd> vm_details vmGuid=2a4765fa-3b54-11e3-97a2-005056b367d4    
+evmcmd> cluster_listall    
+evmcmd> resourcepool_listall    
+evmcmd> datastore_listall    
+evmcmd> version    
 
 Current Updates
 ---------------
