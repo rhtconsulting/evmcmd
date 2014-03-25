@@ -215,30 +215,54 @@ class EvmCmd
           @management_sytems.details(run_arguments)
         when "mgtsys_gettags"
           @management_sytems.gettags(run_arguments)
+        when "mgtsys_settag"
+          @management_sytems.settag(run_arguments)
         when "datastore_listall"
           @datastore.listall(run_arguments)
         when "datastore_getvms"
           @datastore.getvms(run_arguments)
-        when "datastore_bytag"
+        when "datastore_gettags"
+          @datastore.gettags(run_arguments)
+        when "datastore_settag"
+          @datastore.settag(run_arguments)
+        when "datastore_list_bytag"
           @datastore.bytag(run_arguments)
         when "datastore_gethosts"
           @datastore.gethosts(run_arguments)
         when "datastore_getmgtsys"
           @datastore.getmgtsys(run_arguments)
+        when "resourcepool_gettags"
+          @resourcepool.gettags(run_arguments)
+        when "resourcepool_settag"
+          @resourcepool.settag(run_arguments)
         when "resourcepool_listall"
           @resourcepool.listall(run_arguments)
+        when "resourcepool_getvms"
+          @resourcepool.getvms(run_arguments)
+        when "resourcepool_gethosts"
+          @resourcepool.gethosts(run_arguments)
+        when "resourcepool_list_bytag"
+          @resourcepool.bytag(run_arguments)
+        when "resourcepool_getmgtsys"
+          @resourcepool.getmgtsys(run_arguments)
         when "vm_listall"
           @virtualmachines.listall(run_arguments)
         when "vm_details"
           @virtualmachines.details(run_arguments)
+        when "vm_setowner"
+          @virtualmachines.setowner(run_arguments)
+        when "vm_settag"
+          @virtualmachines.settag(run_arguments)
         when "vm_gettags"
           @virtualmachines.gettags(run_arguments)
-        when "vm_bytag"
+        when "vm_list_bytag"
           @virtualmachines.bytag(run_arguments)
         when "host_listall"
           @host.listall(run_arguments)
         when "host_gettags"
           @host.gettags(run_arguments)
+        when "host_settag"
+          @host.settag(run_arguments)
         when "host_getvms"
           @host.getvms(run_arguments)
         when "host_details"
@@ -247,13 +271,19 @@ class EvmCmd
           @host.getmgtsys(run_arguments)
         when "vm_getname"
           @virtualmachines.getname(run_arguments)
-        when "automationreq_create"
+        when "automationrequest"
           @automationreq.create(run_arguments)
+        when "provisionrequest"
+          @automationreq.provision(run_arguments)
         when "cluster_listall"
           @cluster.listall(run_arguments)
         when "cluster_getvms"
           @cluster.getvms(run_arguments)
-        when "cluster_bytag"
+        when "cluster_gettags"
+          @cluster.gettags(run_arguments)
+        when "cluster_settag"
+          @cluster.settag(run_arguments)
+        when "cluster_list_bytag"
           @cluster.bytag(run_arguments)
         when "cluster_gethosts"
           @cluster.gethosts(run_arguments)

@@ -39,6 +39,32 @@ class Clusters
     end
   end
 
+  ########################################################################################################################
+  def gettags(args)
+    $id = args['-i']
+
+    if $id == nil
+      puts "Error, you must specify -i ID  with a value"
+    else
+      #h = splitOpts(args[0])
+      #guid = h['hostGuid']
+      #login
+      response = @client.call(:cluster_get_tags, message: {clusterId: "#{$id}"})
+      response_hash =  response.to_hash[:cluster_get_tags_response][:return]
+      if args['--out'] == nil
+        if response_hash[:item] == nil
+          puts "No records found"
+        else
+          output = AddHashToArray(response_hash[:item])
+          output.each { |key| showminimal("Category", "#{key[:category_display_name]}", "Tag", "#{key[:tag_display_name]}") }
+        end
+      end
+      if args['--out'] == 'json'
+        puts JSON.pretty_generate(response_hash)
+      end
+    end
+  end
+
   #####################################################################################
   def gethosts(args)
     $id = args['-i']
@@ -96,4 +122,28 @@ class Clusters
       end
     end
   end
+
+  ########################################################################################################################
+  def settag(args)
+    $id = args['-i']
+    $category = args['-c']
+    $name = args['-n']
+
+    if $id == nil
+      puts "Error: The -i ID is required."
+      exit
+    end
+    if $category == nil
+      puts "Error: The -c category is required."
+      exit
+    end
+    if $name == nil
+      puts "Error: The -n category_name is required."
+      exit
+    end
+    response = @client.call(:cluster_set_tag, message: {clusterId: "#{$id}", category: "#{$category}", name: "#{$name}"})
+    response_hash =  response.to_hash[:cluster_set_tag_response][:return]
+    gettags(args)
+  end
+
 end

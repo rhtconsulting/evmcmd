@@ -209,4 +209,27 @@ class Host
     end
   end
 
+  ########################################################################################################################
+  def settag(args)
+    $guid = args['-g']
+    $category = args['-c']
+    $name = args['-n']
+
+    if $guid == nil
+      puts "Error: The -g GUID is required."
+      exit
+    end
+    if $category == nil
+      puts "Error: The -c category is required."
+      exit
+    end
+    if $name == nil
+      puts "Error: The -n category_name is required."
+      exit
+    end
+    response = @client.call(:host_set_tag, message: {hostGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
+    response_hash =  response.to_hash[:host_set_tag_response][:return]
+    gettags(args)
+  end
+
 end

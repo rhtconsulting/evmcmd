@@ -6,7 +6,7 @@ class AutomationRequest
   end
 
   ########################################################################################################################
-  def create(args)
+  def provision(args)
     $template = args['-t']
     $vm = args['-v']
     $requester = args['-r']
@@ -31,4 +31,24 @@ class AutomationRequest
     puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
 
   end
+
+  ########################################################################################################################
+  def create(args)
+    $uri_parts = args['-u']
+    $parameters = args['-p']
+    $requester = args['-r']
+
+    body_hash = {}
+    body_hash['version']            = '1.1'
+    body_hash['uri_parts']          = "#{$template}"
+    body_hash['parameters']         = "#{$parameters}"
+    body_hash['requester']          = "#{$requester}"
+
+    response = @client.call(:create_automation_request, message: body_hash)
+    request_hash = response.to_hash
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
+
+  end
+
 end

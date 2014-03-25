@@ -192,4 +192,45 @@ class VirtualMachines
       end
     end
   end
+
+  ########################################################################################################################
+  def settag(args)
+    $guid = args['-g']
+    $category = args['-c']
+    $name = args['-n']
+
+    if $guid == nil
+      puts "Error: The -g GUID is required."
+      exit
+    end
+    if $category == nil
+      puts "Error: The -c category is required."
+      exit
+    end
+    if $name == nil
+      puts "Error: The -n category_name is required."
+      exit
+    end
+    response = @client.call(:vm_set_tag, message: {vmGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
+    response_hash =  response.to_hash[:vm_set_tag_response][:return]
+    gettags(args)
+  end
+
+  ########################################################################################################################
+  def setowner(args)
+    $guid = args['-g']
+    $owner = args['-o']
+
+    if $guid == nil
+      puts "Error: The -g GUID is required."
+      exit
+    end
+    if $owner == nil
+      puts "Error: The -o owner is required."
+      exit
+    end
+    response = @client.call(:vm_set_owner, message: {vmGuid: "#{$guid}", owner: "#{$owner}"})
+    response_hash =  response.to_hash[:vm_set_tag_response][:return]
+    gettags(args)
+  end
 end
