@@ -8,7 +8,6 @@ class Host
 
   #####################################################################################
   def listall
-    #login
     message_title = "Host"
     response = @client.call(:get_host_list, message: {emsGuid: "all"})
     response_hash =  response.to_hash[:get_host_list_response][:return]
@@ -18,11 +17,7 @@ class Host
 
   #####################################################################################
   def getvms(args)
-    OptionParser.new do |o|
-      o.on('-g GUID') { |guid| $guid = guid }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $guid = args['-g']
 
     if $guid == nil
       puts "Error, you must specify -g GUID  with a value"
@@ -37,11 +32,7 @@ class Host
 
   ########################################################################################################################
   def gettags(args)
-    OptionParser.new do |o|
-      o.on('-g GUID') { |guid| $guid = guid }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $guid = args['-g']
 
     if $guid == nil
       puts "Error, you must specify -g GUID  with a value"
@@ -62,11 +53,7 @@ class Host
 
   #####################################################################################
   def getmgtsys(args)
-    OptionParser.new do |o|
-      o.on('-g GUID') { |guid| $guid = guid }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $guid = args['-g']
 
     if $guid == nil
       puts "Error, you must specify -g GUID  with a value"
@@ -148,11 +135,7 @@ class Host
 
   ########################################################################################################################
   def details(args)
-    OptionParser.new do |o|
-      o.on('-g GUID') { |guid| $guid = guid }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $guid = args['-g']
 
     if $guid == nil
       puts "Error, you must specify -g GUID  with a value"

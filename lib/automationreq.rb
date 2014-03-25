@@ -7,17 +7,13 @@ class AutomationRequest
 
   ########################################################################################################################
   def create(args)
-    OptionParser.new do |o|
-      o.on('-t templateFields') { |template| $template = template }
-      o.on('-v vmFields') { |vm| $vm = vm }
-      o.on('-r requester') { |requester| $requester = requester }
-      o.on('-c tags') { |tags| $tags = tags }
-      o.on('-V param=value') { |values| $values = values }
-      o.on('-M param=value') { |miq_values| $miq_values = miq_values }
-      o.on('-E param=value') { |ems_values| $ems_values = ems_values }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $template = args['-t']
+    $vm = args['-v']
+    $requester = args['-r']
+    $tags = args['-c']
+    $values = args['-V']
+    $miq_values = args['-M']
+    $ems_values = args['-E']
 
     body_hash = {}
     body_hash['version']            = '1.1'

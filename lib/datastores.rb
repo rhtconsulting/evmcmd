@@ -16,11 +16,7 @@ class DataStore
 
   #####################################################################################
   def getvms(args)
-    OptionParser.new do |o|
-      o.on('-i ID') { |id| $id = id }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $id = args['-i']
 
     if $id == nil
       puts "Error, you must specify -i ID  with a value"
@@ -35,11 +31,7 @@ class DataStore
 
   #####################################################################################
   def gethosts(args)
-    OptionParser.new do |o|
-      o.on('-i ID') { |id| $id = id }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $id = args['-i']
 
     if $id == nil
       puts "Error, you must specify -i ID  with a value"
@@ -54,11 +46,7 @@ class DataStore
 
   #####################################################################################
   def getmgtsys(args)
-    OptionParser.new do |o|
-      o.on('-i ID') { |id| $id = id }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $id = args['-i']
 
     if $id == nil
       puts "Error, you must specify -i ID  with a value"
@@ -72,12 +60,9 @@ class DataStore
   end
 
   ########################################################################################################################
-  def bytag(tag)
-    OptionParser.new do |o|
-      o.on('-t TAG') { |tag| $tag = tag }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+  def bytag(args)
+    $tag = args['-t']
+
     if $tag == nil
       puts "Error: The -t category/category_name is required."
     else

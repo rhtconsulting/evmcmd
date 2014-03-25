@@ -25,11 +25,8 @@ class RunCmd
   def self.run(cmdargs)
     myCmd = EvmCmd.new
     cmd = {'-x'=>"#{cmdargs[0]}"}
-    puts cmd.inspect
     if cmdargs.count == 1
-      puts cmdargs.count.inspect
       cmd.merge!(:args => false)
-      puts cmd.inspect
       myCmd.run(cmd)
     else
       cmdargs.delete(cmdargs[0])

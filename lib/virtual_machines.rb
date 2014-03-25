@@ -16,11 +16,8 @@ class VirtualMachines
 
   ########################################################################################################################
   def gettags(args)
-    OptionParser.new do |o|
-      o.on('-g GUID') { |guid| $guid = guid }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $guid = args['-g']
+
     if $guid == nil
       puts "Error, you must specify -g GUID or name with a value"
     else
@@ -34,9 +31,6 @@ class VirtualMachines
 
   ########################################################################################################################
   def printout(vm_details,host_details,cluster_details,rp_details)
-#    puts vm_details.inspect
-#    puts host_details.inspect
-#    puts cluster_details.inspect
     @msg_details = { :vm_details => vm_details }
     @msg_details.merge!(:host_details => host_details)
     @msg_details.merge!(:cluster_details => cluster_details)
@@ -82,11 +76,7 @@ class VirtualMachines
 
   ########################################################################################################################
   def details(args)
-    OptionParser.new do |o|
-      o.on('-g GUID') { |guid| $guid = guid }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $guid = args['-g']
 
     if $guid == nil
       puts "Error, you must specify -g GUID  with a value"
@@ -112,11 +102,7 @@ class VirtualMachines
 
   ########################################################################################################################
   def bytag(args)
-    OptionParser.new do |o|
-      o.on('-t TAG') { |tag| $tag = tag }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $tag = args['-t']
 
     if $tag == nil
       puts "Error: The -t category/category_name is required."

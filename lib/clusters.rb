@@ -7,7 +7,6 @@ class Clusters
 
 	########################################################################################################################
 	def listall
-	  #login
 	  message_title = "Cluster"
 	  response = @client.call(:get_cluster_list, message: {emsGuid: "all"})
 	  response_hash =  response.to_hash[:get_cluster_list_response][:return]
@@ -17,11 +16,7 @@ class Clusters
 
   #####################################################################################
   def getvms(args)
-    OptionParser.new do |o|
-      o.on('-i ID') { |id| $id = id }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $id = args['-i']
 
     if $id == nil
       puts "Error, you must specify -i ID  with a value"
@@ -36,11 +31,7 @@ class Clusters
 
   #####################################################################################
   def gethosts(args)
-    OptionParser.new do |o|
-      o.on('-i ID') { |id| $id = id }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $id = args['-i']
 
     if $id == nil
       puts "Error, you must specify -i ID  with a value"
@@ -55,11 +46,7 @@ class Clusters
 
   #####################################################################################
   def getmgtsys(args)
-    OptionParser.new do |o|
-      o.on('-i ID') { |id| $id = id }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $id = args['-i']
 
     if $id == nil
       puts "Error, you must specify -i ID  with a value"
@@ -73,11 +60,8 @@ class Clusters
 
   ########################################################################################################################
   def bytag(args)
-    OptionParser.new do |o|
-      o.on('-t TAG') { |tag| $tag = tag }
-      o.on('-h') { puts o; exit }
-      o.parse!
-    end
+    $tag = args['-t']
+
     if $tag == nil
       puts "Error: The -t category/category_name is required."
     else
