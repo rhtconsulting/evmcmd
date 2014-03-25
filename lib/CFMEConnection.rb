@@ -24,7 +24,7 @@ class CFMEConnection
 			@password = password
 
 			@url = "https://" << host << "/vmdbws/wsdl" 
-			puts "Connecting to #{@url} ..."
+			puts "# Connecting to #{@url} ..."
 			@client = Savon::client(wsdl: @url, ssl_version: :SSLv3, basic_auth: [user,password], log: false, pretty_print_xml: true,
 				log_level: :error, raise_errors: false, ssl_verify_mode: :none)
 
