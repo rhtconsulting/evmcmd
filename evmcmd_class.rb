@@ -8,7 +8,6 @@ load "lib/hosts.rb"
 load "lib/clusters.rb"
 load "lib/datastores.rb"
 load "lib/resource_pools.rb"
-load "lib/json.rb"
 
 require 'readline'
 require 'savon'
