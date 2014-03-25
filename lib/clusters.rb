@@ -6,12 +6,17 @@ class Clusters
 	end
 
 	########################################################################################################################
-	def listall
+	def listall(args)
 	  message_title = "Cluster"
 	  response = @client.call(:get_cluster_list, message: {emsGuid: "all"})
 	  response_hash =  response.to_hash[:get_cluster_list_response][:return]
-	  output = AddHashToArray(response_hash[:item])
-	  output.each { |key| showminimal("ID", "#{key[:id]}", "#{message_title}", "#{key[:name]}") }
+    if args['--out'] == nil
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("ID", "#{key[:id]}", "#{message_title}", "#{key[:name]}") }
+    end
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(response_hash)
+    end
   end
 
   #####################################################################################
@@ -24,8 +29,13 @@ class Clusters
       message_title = "Cluster"
       response = @client.call(:find_cluster_by_id, message: {clusterId: "#{$id}"})
       response_hash =  response.to_hash[:find_cluster_by_id_response][:return][:vms]
-      output = AddHashToArray(response_hash[:item])
-      output.each { |key| showminimal("GUID", "#{key[:guid]}", "VM", "#{key[:name]}") }
+      if args['--out'] == nil
+        output = AddHashToArray(response_hash[:item])
+        output.each { |key| showminimal("GUID", "#{key[:guid]}", "VM", "#{key[:name]}") }
+      end
+      if args['--out'] == 'json'
+        puts JSON.pretty_generate(response_hash)
+      end
     end
   end
 
@@ -39,8 +49,13 @@ class Clusters
       message_title = "Datastore"
       response = @client.call(:find_cluster_by_id, message: {clusterId: "#{$id}"})
       response_hash =  response.to_hash[:find_cluster_by_id_response][:return][:hosts]
-      output = AddHashToArray(response_hash[:item])
-      output.each { |key| showminimal("GUID", "#{key[:guid]}", "Host", "#{key[:name]}") }
+      if args['--out'] == nil
+        output = AddHashToArray(response_hash[:item])
+        output.each { |key| showminimal("GUID", "#{key[:guid]}", "Host", "#{key[:name]}") }
+      end
+      if args['--out'] == 'json'
+        puts JSON.pretty_generate(response_hash)
+      end
     end
   end
 
@@ -54,7 +69,12 @@ class Clusters
       message_title = "Datastore"
       response = @client.call(:find_cluster_by_id, message: {clusterId: "#{$id}"})
       response_hash =  response.to_hash[:find_cluster_by_id_response][:return][:ext_management_system]
-      showminimal("GUID", "#{response_hash[:guid]}", "EVM", "#{response_hash[:name]}")
+      if args['--out'] == nil
+        showminimal("GUID", "#{response_hash[:guid]}", "EVM", "#{response_hash[:name]}")
+      end
+      if args['--out'] == 'json'
+        puts JSON.pretty_generate(response_hash)
+      end
     end
   end
 
@@ -67,8 +87,13 @@ class Clusters
     else
       response = @client.call(:get_clusters_by_tag, message: {tag: "#{$tag}"})
       response_hash =  response.to_hash[:get_clusters_by_tag_response][:return]
-      output = AddHashToArray(response_hash[:item])
-      output.each { |key| puts "ID: #{key[:id]}\t Cluster: #{key[:name]}" }
+      if args['--out'] == nil
+        output = AddHashToArray(response_hash[:item])
+        output.each { |key| puts "ID: #{key[:id]}\t Cluster: #{key[:name]}" }
+      end
+      if args['--out'] == 'json'
+        puts JSON.pretty_generate(response_hash)
+      end
     end
   end
 end

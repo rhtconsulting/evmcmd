@@ -210,13 +210,13 @@ class EvmCmd
         when "version"
           self.version
         when "mgtsys_listall"
-          @management_sytems.listall
+          @management_sytems.listall(run_arguments)
         when "mgtsys_details"
           @management_sytems.details(run_arguments)
         when "mgtsys_gettags"
           @management_sytems.gettags(run_arguments)
         when "datastore_listall"
-          @datastore.listall
+          @datastore.listall(run_arguments)
         when "datastore_getvms"
           @datastore.getvms(run_arguments)
         when "datastore_bytag"
@@ -226,9 +226,9 @@ class EvmCmd
         when "datastore_getmgtsys"
           @datastore.getmgtsys(run_arguments)
         when "resourcepool_listall"
-          @resourcepool.listall
+          @resourcepool.listall(run_arguments)
         when "vm_listall"
-          @virtualmachines.listall
+          @virtualmachines.listall(run_arguments)
         when "vm_details"
           @virtualmachines.details(run_arguments)
         when "vm_gettags"
@@ -236,7 +236,7 @@ class EvmCmd
         when "vm_bytag"
           @virtualmachines.bytag(run_arguments)
         when "host_listall"
-          @host.listall
+          @host.listall(run_arguments)
         when "host_gettags"
           @host.gettags(run_arguments)
         when "host_getvms"
@@ -249,10 +249,8 @@ class EvmCmd
           @virtualmachines.getname(run_arguments)
         when "automationreq_create"
           @automationreq.create(run_arguments)
-        when "getvars"
-          @getvars.name(guid_id)
         when "cluster_listall"
-          @cluster.listall
+          @cluster.listall(run_arguments)
         when "cluster_getvms"
           @cluster.getvms(run_arguments)
         when "cluster_bytag"
