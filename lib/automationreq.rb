@@ -33,7 +33,7 @@ class AutomationRequest
   end
 
   ########################################################################################################################
-  def create(args)
+  def create_automation_request(args)
     $uri_parts = args['-u']
     $parameters = args['-p']
     $requester = args['-r']
@@ -48,6 +48,26 @@ class AutomationRequest
     request_hash = response.to_hash
     puts "Request Returned: #{request_hash.inspect}"
     puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
+
+  end
+
+  ########################################################################################################################
+  def get_automation_task(args)
+    $id = args['-i']
+    response = @client.call(:get_automation_task, message: {taskId: "#{$id}"})
+    request_hash = response.to_hash
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:get_automation_task_response][:return].inspect}"
+
+  end
+
+  ########################################################################################################################
+  def get_automation_request(args)
+    $id = args['-i']
+    response = @client.call(:get_automation_request, message: {requestId: "#{$id}"})
+    request_hash = response.to_hash
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:get_automation_request_response][:return].inspect}"
 
   end
 

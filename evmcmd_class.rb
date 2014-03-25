@@ -8,6 +8,7 @@ load "lib/hosts.rb"
 load "lib/clusters.rb"
 load "lib/datastores.rb"
 load "lib/resource_pools.rb"
+load "lib/json.rb"
 
 require 'readline'
 require 'savon'
@@ -78,33 +79,40 @@ class EvmCmd
         'exit',
         'quit'].sort
     @list = [
-        ['automationreq_create', 'Create Automation Request'],
+        ['automationrequest', 'Create Automation Request'],
+        ['provisionrequest', 'Create VM Provisioning Request'],
         ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
         ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
+        ['mgtsys_settag', 'Set all the tags for the CFME Appliance'],
         ['mgtsys_details', 'Get all the details from the CFME Appliance'],
         ['host_listall', 'List all the hosts in the CFME Appliance'],
         ['host_gettags', 'Get all the tags defined for a specific host in the CFME Appliance'],
+        ['host_settags', 'set all the tags defined for a specific host in the CFME Appliance'],
         ['host_getvms', 'Get all the VMs that are managed by the CFME Appliance'],
+        ['host_getmgtsys', 'Get all the VMs that are managed by the CFME Appliance'],
         ['host_details', 'Get host details'],
-        ['vm_listall', 'List all the Virtual Machines managed by the CFME Appliance'],
-        ['vm_bytags', 'Find VMs by Tag'],
-        ['vm_gettags', 'Get all the tags for a Virtual Machine'],
-        ['vm_details', 'Retrieve the Virtual Machine details'],
+        ['vm_listall', 'List all the VMs managed by the CFME Appliance'],
+        ['vm_details', 'VM details'],
+        ['vm_settag', 'Set tag for VM'],
+        ['vm_gettags', 'List all tags in VM'],
+        ['vm_list_bytag', 'List all the VMs by tag'],
         ['cluster_listall', 'List all the Clusters managed by the CFME Appliance'],
-        ['cluster_getvms', 'List all VM in the Cluster'],
-        ['cluster_gethosts', 'List all Hosts in the Cluster'],
-        ['cluster_getmgtsys', 'List the mgmt systems for the Cluster'],
-        ['cluster_bytag', 'List all the Clusters by tag'],
+        ['cluster_getvms', 'List all VM in the Datastore'],
+        ['cluster_gethosts', 'List all Hosts connected to the Datastore'],
+        ['cluster_getmgtsys', 'List the mgmt systems for the Datastore'],
+        ['cluster_settag', 'List all the Clusters by tag'],
+        ['cluster_gettags', 'List all the Clusters by tag'],
+        ['cluster_list_bytag', 'List all the Clusters by tag'],
         ['resourcepool_listall', 'List all the resource pools managed by the CFME Appliance'],
         ['datastore_listall', 'List all the Datastores managed by the CFME Appliance'],
         ['datastore_getvms', 'List all VM in the Datastore'],
         ['datastore_gethosts', 'List all Hosts connected to the Datastore'],
         ['datastore_getmgtsys', 'List the mgmt systems for the Datastore'],
-        ['datastore_bytag', 'List all the Datastores by tag'],
+        ['datastore_settag', 'List all the Datastores by tag'],
+        ['datastore_gettags', 'List all the Datastores by tag'],
+        ['datastore_list_bytag', 'List all the Datastores by tag'],
         ['version', 'Get the CFME Appliance Version'],
         ['evm_ping', 'Ping the CFME Appliance'],
-        ['evm_host_list', 'List all hosts managed by the CFME engine'],
-        ['evm_resource_pool_list', 'List all the resource pools managed by the CFME Appliance'],
         ['help [cmd]', 'Help me please!'],
         ['exit', 'Get me out of here!'],
         ['quit', 'I want to quit! Get me out of here!']
@@ -129,7 +137,7 @@ class EvmCmd
     @cluster = Clusters.new
     @datastore = DataStore.new
     @resourcepool = ResourcePool.new
-  end  
+  end
 
   def read_config
     begin
@@ -259,8 +267,16 @@ class EvmCmd
           @virtualmachines.settag(run_arguments)
         when "vm_gettags"
           @virtualmachines.gettags(run_arguments)
+        when "vm_state_start"
+          @virtualmachines.state_start(run_arguments)
+        when "vm_state_stop"
+          @virtualmachines.state_stop(run_arguments)
+        when "vm_state_suspend"
+          @virtualmachines.state_suspen(run_arguments)
         when "vm_list_bytag"
           @virtualmachines.bytag(run_arguments)
+        when "vm_delete"
+          @virtualmachines.vmrm(run_arguments)
         when "host_listall"
           @host.listall(run_arguments)
         when "host_gettags"
@@ -273,10 +289,14 @@ class EvmCmd
           @host.details(run_arguments)
         when "host_getmgtsys"
           @host.getmgtsys(run_arguments)
-        when "automationrequest"
-          @automationreq.create(run_arguments)
-        when "provisionrequest"
+        when "create_automation_request"
+          @automationreq.create_automation_request(run_arguments)
+        when "provision_request"
           @automationreq.provision(run_arguments)
+        when "get_automation_request"
+          @automationreq.get_automation_request(run_arguments)
+        when "get_automation_task"
+          @automationreq.get_automation_task(run_arguments)
         when "cluster_listall"
           @cluster.listall(run_arguments)
         when "cluster_getvms"

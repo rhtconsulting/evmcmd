@@ -233,4 +233,52 @@ class VirtualMachines
     response_hash =  response.to_hash[:vm_set_tag_response][:return]
     gettags(args)
   end
+
+  ########################################################################################################################
+  def state_start(args)
+    $guid = args['-g']
+    if $guid == nil
+      puts "Error: The -g GUID is required."
+      exit
+    end
+    response = @client.call(:evm_smart_start, message: {vmGuid: "#{$guid}"})
+    response_hash =  response.to_hash[:evm_smart_start_response][:return]
+    puts response_hash.inspect
+  end
+
+  ########################################################################################################################
+  def state_stop(args)
+    $guid = args['-g']
+    if $guid == nil
+      puts "Error: The -g GUID is required."
+      exit
+    end
+    response = @client.call(:evm_smart_stop, message: {vmGuid: "#{$guid}"})
+    response_hash =  response.to_hash[:evm_smart_stop_response][:return]
+    puts response_hash.inspect
+  end
+
+  ########################################################################################################################
+  def state_suspend(args)
+    $guid = args['-g']
+    if $guid == nil
+      puts "Error: The -g GUID is required."
+      exit
+    end
+    response = @client.call(:evm_smart_suspend, message: {vmGuid: "#{$guid}"})
+    response_hash =  response.to_hash[:evm_smart_suspend_response][:return]
+    puts response_hash.inspect
+  end
+
+  ########################################################################################################################
+  def vmrm(args)
+    $name = args['-n']
+    if $name == nil
+      puts "Error: The -n vmName is required."
+      exit
+    end
+    response = @client.call(:evm_delete_vm_by_name, message: {vmName: "#{$name}"})
+    response_hash =  response.to_hash[:evm_delete_vm_by_name_response][:return]
+    puts response_hash.inspect
+  end
 end
