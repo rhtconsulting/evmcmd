@@ -121,4 +121,23 @@ class ManagementSystems
     end
   end
 
+  ########################################################################################################################
+  def ping(args)
+    @client.evm_ping
+  end
+
+  ########################################################################################################################
+  def host_list(args)
+    response = @client.call(:evm_host_list, nil)
+    response_hash =  response.to_hash[:evm_host_list_response][:return]
+    if args['--out'] == nil
+      output = AddHashToArray(response_hash[:item])
+      output.each { |key| showminimal("Name: ", "#{key[:name]}", "GUID: ", "#{key[:guid]}") }
+    end
+
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(response_hash)
+    end
+  end
+
 end

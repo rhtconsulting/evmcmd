@@ -217,6 +217,10 @@ class EvmCmd
           @management_sytems.gettags(run_arguments)
         when "mgtsys_settag"
           @management_sytems.settag(run_arguments)
+        when "evm_ping"
+          @management_sytems.ping(run_arguments)
+        when "mgtsys_host_list"
+          @management_sytems.host_list(run_arguments)
         when "datastore_listall"
           @datastore.listall(run_arguments)
         when "datastore_getvms"
@@ -269,8 +273,6 @@ class EvmCmd
           @host.details(run_arguments)
         when "host_getmgtsys"
           @host.getmgtsys(run_arguments)
-        when "vm_getname"
-          @virtualmachines.getname(run_arguments)
         when "automationrequest"
           @automationreq.create(run_arguments)
         when "provisionrequest"
@@ -289,19 +291,6 @@ class EvmCmd
           @cluster.gethosts(run_arguments)
         when "cluster_getmgtsys"
           @cluster.getmgtsys(run_arguments)
-        when "evm_host_list"
-          #puts @client.call(:evm_get, message: {token: "5315b77e-3b7d-11e3-9546-525400975f77", uri: "https://#{@cfmehost}/vmdbws/wsdl"})
-          self.evm_host_list 
-        when "get_ems_list"
-          puts @client.call(:get_ems_list, nil)
-        when "evm_ping"
-          self.evm_ping
-        when "evm_vm_software"
-          self.evm_vm_software(run_arguments)
-        when "evm_resource_pool_list"
-          self.evm_resource_pool_list
-        when "evm_vm_accounts"
-          self.evm_vm_accounts
         when "test"
           @evm_commands.each do |cmd|
             begin
@@ -326,47 +315,6 @@ class EvmCmd
     rescue => exception
       puts "Exception: " << exception.message
       return
-    end
-  end
-
-  def evm_ping
-    @client.evm_ping
-  end
-
-  def evm_vm_software(vmGuid)
-    if vmGuid == nil
-      puts "Error: The VM GUID is required."
-    else
-      response = @client.call(:evm_vm_software, message: {vmGuid: "#{vmGuid}"})
-      puts "hash"
-      response_hash =  response.to_hash[:evm_vm_software_response][:return]
-      puts("Response: #{response_hash}") 
-    end
-  end
-
-  def evm_host_list
-    response = @client.call(:evm_host_list, nil)
-    response_hash =  response.to_hash[:evm_host_list_response][:return]
-    output = AddHashToArray(response_hash[:item])
-    output.each { |key| showminimal("Name: ", "#{key[:name]}", "GUID: ", "#{key[:guid]}") }
-  end
-
-  def evm_resource_pool_list
-    response = @client.call(:evm_resource_pool_list, nil)
-    response_hash =  response.to_hash[:evm_resource_pool_list_response][:return]
-    output = AddHashToArray(response_hash[:item])
-    output.each { |key| showminimal("Name: ", "#{key[:name]}", "ID: ", "#{key[:id]}") }
-  end
-
-  def evm_vm_accounts
-    if vmGuid == nil
-      puts "Error: The VM GUID is required."
-    else
-      response = @client.call(:evm_vm_accounts, message: {GUID: "#{vmGuid}"})
-      puts response
-      response_hash =  response.to_hash[:evm_vm_accounts_response][:return]
-      output = AddHashToArray(response_hash[:item])
-      output.each { |key| showminimal("Name: ", "#{key[:name]}", "ID: ", "#{key[:id]}") }
     end
   end
 
