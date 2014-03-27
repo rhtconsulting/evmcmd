@@ -13,3 +13,4 @@ connection:
    port: "443" # Use this in case the CFME engine is listening on another port
    user: "admin"
    pass: "smartvm"
+   ssl_perm: "~/.ssh/id_rsa.pem"

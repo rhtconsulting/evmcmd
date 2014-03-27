@@ -135,15 +135,15 @@ class DataStore
 
     if $id == nil
       puts "Error: The -i ID is required."
-      exit
+      return
     end
     if $category == nil
       puts "Error: The -c category is required."
-      exit
+      return
     end
     if $name == nil
       puts "Error: The -n category_name is required."
-      exit
+      return
     end
     response = @client.call(:datastore_set_tag, message: {datastoreId: "#{$id}", category: "#{$category}", name: "#{$name}"})
     response_hash =  response.to_hash[:datastore_set_tag_response][:return]

@@ -59,6 +59,7 @@ class EvmCmd
         'vm_gettags',
         'vm_details',
         'vm_bytag',
+        'vm_settag',
         'cluster_listall',
         'cluster_getvms',
         'cluster_gethosts',
@@ -78,7 +79,7 @@ class EvmCmd
         'exit',
         'quit'].sort
     @list = [
-        ['automationrequest', 'Create Automation Request'],
+        ['automationreq_create', 'Create Automation Request'],
         ['provisionrequest', 'Create VM Provisioning Request'],
         ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
         ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
@@ -195,7 +196,7 @@ class EvmCmd
         run_cmd = arguments['-x']
         run_method = arguments['-x']
         run_arguments = arguments
-        #puts "Running command #{run_method} arguments: #{run_arguments}"
+        puts "Running command #{run_method} arguments: #{run_arguments}"
         handle_call(arguments['-x'], run_arguments)
       end
     rescue => exception
@@ -322,8 +323,8 @@ class EvmCmd
         when "help"
           self.help(run_arguments)
         else
-          puts "Unrecognized command"
-          self.help(nil)
+          puts "Unrecognized command: #{run_method}"
+          self.help({})
         end
     rescue => exception
       puts "Exception: " << exception.message

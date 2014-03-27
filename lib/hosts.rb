@@ -217,15 +217,15 @@ class Host
 
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return
     end
     if $category == nil
       puts "Error: The -c category is required."
-      exit
+      return
     end
     if $name == nil
       puts "Error: The -n category_name is required."
-      exit
+      return
     end
     response = @client.call(:host_set_tag, message: {hostGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
     response_hash =  response.to_hash[:host_set_tag_response][:return]

@@ -61,15 +61,15 @@ class ManagementSystems
 
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return
     end
     if $category == nil
       puts "Error: The -c category is required."
-      exit
+      return
     end
     if $name == nil
       puts "Error: The -n category_name is required."
-      exit
+      return
     end
     response = @client.call(:ems_set_tag, message: {emsGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
     response_hash =  response.to_hash[:ems_set_tag_response][:return]

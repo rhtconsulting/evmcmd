@@ -34,10 +34,12 @@ class VirtualMachines
     vm = @client.call(:find_vm_by_guid, message: {vmGuid: "#{guid}"})
     vm_hash =  vm.to_hash[:find_vm_by_guid_response][:return]
     vm_details = AddHashToArray(vm_hash)
+
     vm_details.each { |vm|
-      $hostGuid = vm[:host][:guid]
-      $clusterId = vm[:parent_cluster][:id]
-      $resourcepoolId = vm[:parent_resource_pool][:id]
+      # Protected these items as well... sometimes vm[:host], vm[:parent] and vm[:parent_resource_pool] are nil
+      $hostGuid = (vm[:host]) ? vm[:host][:guid] : nil
+      $clusterId = (vm[:parent_cluster]) ? vm[:parent_cluster][:id] : nil
+      $resourcepoolId = (vm[:parent_resource_pool]) ? vm[:parent_resource_pool][:id] : nil
     }
     if vm_hash.nil?
       puts "vm_hash is empty"
@@ -45,43 +47,58 @@ class VirtualMachines
       @msg_details.merge!(:vm_details => vm_hash)
     end
 
-    ############################################################
-    # Host
-    ############################################################
-    puts "# Retrieving Host information for VM"
-    host = @client.call(:find_host_by_guid, message: {hostGuid: "#{$hostGuid}"})
-    host_hash =  host.to_hash[:find_host_by_guid_response][:return]
-    host_details = AddHashToArray(host_hash)
-    if host_hash.nil?
-      puts "host_hash is empty"
+    if $hostGuid == nil
+      puts "# Cannot retrieve Host information for VM"
+      puts "# Host GUID is #{$hostGuid} for VM"
     else
-      @msg_details.merge!(:host_details => host_hash)
+      ############################################################
+      # Host
+      ############################################################
+      puts "# Retrieving Host information for VM"
+      host = @client.call(:find_host_by_guid, message: {hostGuid: "#{$hostGuid}"})
+      host_hash =  host.to_hash[:find_host_by_guid_response][:return]
+      host_details = AddHashToArray(host_hash)
+      if host_hash.nil?
+        puts "host_hash is empty"
+      else
+        @msg_details.merge!(:host_details => host_hash)
+      end
     end
 
-    ############################################################
-    # Cluster
-    ############################################################
-    puts "# Retrieving Parent Cluster of VM"
-    cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{$clusterId}"})
-    cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
-    if cluster_hash.nil?
-      puts "cluster_hash is empty"
+    if $clusterId == nil
+      puts "# Cannot retrieve Cluster information for VM"
+      puts "# The Parent Cluster Id does not exist in the VMDB for the VM"
+      puts "# Perhaps it was deleted from the VMDB in Cloudforms."
     else
-      @msg_details.merge!(:cluster_details => cluster_hash)
+      ############################################################
+      # Cluster
+      ############################################################
+      puts "# Retrieving Parent Cluster of VM"
+      cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{$clusterId}"})
+      cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
+      if cluster_hash.nil?
+        puts "cluster_hash is empty"
+      else
+        @msg_details.merge!(:cluster_details => cluster_hash)
+      end
     end
 
-    ############################################################
-    # Resource Pools
-    ############################################################
-    puts "# Retrieving Resource Pools of VM"
-    resourcepool = @client.call(:find_resource_pool_by_id, message: {resourcepoolId: "#{$resourcepoolId}"})
-    resourcepool_hash =  resourcepool.to_hash[:find_resource_pool_by_id_response][:return]
-    if resourcepool_hash.nil?
-      puts "resourcepool_hash is empty"
+    if $resourcepoolId == nil
+      puts "# Could not retrieve resource Pools of the VM"
+      puts "# Perhaps it was deleted from the VMDB in Cloudforms."
     else
-      @msg_details.merge!(:resourcepool_details => resourcepool_hash)
+      ############################################################
+      # Resource Pools
+      ############################################################
+      puts "# Retrieving Resource Pools of VM"
+      resourcepool = @client.call(:find_resource_pool_by_id, message: {resourcepoolId: "#{$resourcepoolId}"})
+      resourcepool_hash =  resourcepool.to_hash[:find_resource_pool_by_id_response][:return]
+      if resourcepool_hash.nil?
+        puts "resourcepool_hash is empty"
+      else
+        @msg_details.merge!(:resourcepool_details => resourcepool_hash)
+      end
     end
-
   end
 
   ########################################################################################################################
@@ -109,36 +126,62 @@ class VirtualMachines
 
   ########################################################################################################################
   def printout(data)
-    vm_wsinfo = extractHashes(data[:vm_details][:ws_attributes][:item])
-    print   "Properties:\n",
-            "\tID:\t\t\t\t#{data[:vm_details][:id]}\n",
-            "\tVM GUID:\t\t\t#{data[:vm_details][:guid]}\n",
-            "\tEMS ID:\t\t\t\t#{data[:vm_details][:ems_id]}\n",
-            "\tName:\t\t\t\t#{data[:vm_details][:name]}\n",
-            "\tHostname:\t\t\t#{vm_wsinfo[:hostnames]}\n",
-            "\tIP Address:\t\t\t#{vm_wsinfo[:ipaddresses].to_s}\n",
-            "\tContainer:\t\t\t#{data[:vm_details][:vendor]} (#{data[:vm_details][:hardware][:numvcpus].to_i} CPUs, #{data[:vm_details][:hardware][:memory_cpu].to_i} MB)\n",
-            "\tParent Host Platform:\t\t#{vm_wsinfo[:v_host_vmm_product]}\n",
-            "\tPlatform Tools:\t\t\t#{data[:vm_details][:tools_status]}\n",
-            "\tOperating System:\t\t#{data[:vm_details][:hardware][:guest_os_full_name]}\n",
-            "\tCPU Affinity:\t\t#{data[:vm_details][:cpu_affinity]}\n",
-            "\tSnapshots:\t\t\t#{vm_wsinfo[:v_total_snapshots]}\n",
-            "\nLifecycle:\n",
-            "\tDiscovered:\t\t\t#{data[:vm_details][:created_on]}\n",
-            "\tLast Analyzed:\t\t\t#{data[:vm_details][:last_scan_on]}\n",
-            "\nRelationships:\n",
-                "\tInfrastructure Provider:\t#{data[:vm_details][:ext_management_system][:name]}\n"
-                            if data[:host_details] != nil
-                              "\tHost:\t\t\t\t#{data[:host_details][:name]}\n"
-                            end
-                            if data[:cluster_details] != nil
-                              print "\tCluster:\t\t\t#{data[:cluster_details][:name]}\n"
-                            end
-                            if data[:rp_details] != nil
-                              print "\tResource Pool:\t\t\t#{data[:rp_details][:name]}\n"
-                            end
-    print "\tDatastores:\t\t\t#{data[:vm_details][:datastores][:item][:name]}\n",
-            "\nCompliance:\n",
+    # The reason we put this in a begin rescue block is to make sure we knew where the error
+    # occurred using the err.backtrace which will give us where the error was...
+    #
+    begin
+      vm_wsinfo = extractHashes(data[:vm_details][:ws_attributes][:item])
+      print   "Properties:\n",
+              "\tID:\t\t\t\t#{data[:vm_details][:id]}\n",
+              "\tVM GUID:\t\t\t#{data[:vm_details][:guid]}\n",
+              "\tEMS ID:\t\t\t\t#{data[:vm_details][:ems_id]}\n",
+              "\tName:\t\t\t\t#{data[:vm_details][:name]}\n",
+              "\tHostname:\t\t\t#{vm_wsinfo[:hostnames]}\n",
+              "\tIP Address:\t\t\t#{vm_wsinfo[:ipaddresses].to_s}\n",
+              "\tContainer:\t\t\t#{data[:vm_details][:vendor]} (#{data[:vm_details][:hardware][:numvcpus].to_i} CPUs, #{data[:vm_details][:hardware][:memory_cpu].to_i} MB)\n",
+              "\tParent Host Platform:\t\t#{vm_wsinfo[:v_host_vmm_product]}\n",
+              "\tPlatform Tools:\t\t\t#{data[:vm_details][:tools_status]}\n",
+              "\tOperating System:\t\t#{data[:vm_details][:hardware][:guest_os_full_name]}\n",
+              "\tCPU Affinity:\t\t#{data[:vm_details][:cpu_affinity]}\n",
+              "\tSnapshots:\t\t\t#{vm_wsinfo[:v_total_snapshots]}\n",
+              "\nLifecycle:\n",
+              "\tDiscovered:\t\t\t#{data[:vm_details][:created_on]}\n",
+              "\tLast Analyzed:\t\t\t#{data[:vm_details][:last_scan_on]}\n",
+              "\nRelationships:\n"
+              # This is sometimes nil so I added some protection...
+              if  (data[:vm_details][:ext_management_system])
+                print "\tInfrastructure Provider:\t #{data[:vm_details][:ext_management_system][:name]}\n"
+              else
+                print "\tInfrastructure Provider:\t Unknown\n"
+              end
+              if data[:host_details] != nil
+                "\tHost:\t\t\t\t#{data[:host_details][:name]}\n"
+              end
+              if data[:cluster_details] != nil
+                print "\tCluster:\t\t\t#{data[:cluster_details][:name]}\n"
+              end
+              if data[:rp_details] != nil
+                print "\tResource Pool:\t\t\t#{data[:rp_details][:name]}\n"
+              end
+    rescue => err
+      puts "Properties exception: #{err.message}"
+      puts err.backtrace
+    end
+
+    # The reason we put this in a begin rescue block is to make sure we knew where the error
+    # occurred using the err.backtrace which will give us where the error was...
+    #
+
+    begin
+      print "\tDatastores: "
+      # Data stores is sometimes nil so I added some protection...
+      #print "\tDatastores:\t\t\t#{data[:vm_details][:datastores][:item][:name]}\n",
+      data_stores = data[:vm_details][:datastores]
+      if data_stores != nil
+        print "\t\t\t#{data_stores[:item][:name]}\n"
+      end
+
+      print      "\nCompliance:\n",
             "\tStatus:\t\t\t\t#{vm_wsinfo[:last_compliance_status]}\n",
             "\tHistory:\t\t\t#{vm_wsinfo[:last_compliance_timestamp]}\n",
             "\nPower Management:\n",
@@ -152,6 +195,10 @@ class VirtualMachines
             "\tDisks:\t\t\t\t#{vm_wsinfo[:disk_1_size]}\n",
             "\tMemory:\t\t\t\t#{data[:vm_details][:hardware][:memory_cpu].to_i / 1024} GB\n",
            ""
+    rescue => err
+      puts "Datastores exception: #{err.message}"
+      puts err.backtrace
+    end
   end
 
   ########################################################################################################################
@@ -201,15 +248,15 @@ class VirtualMachines
 
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return 
     end
     if $category == nil
       puts "Error: The -c category is required."
-      exit
+      return
     end
     if $name == nil
       puts "Error: The -n category_name is required."
-      exit
+      return
     end
     response = @client.call(:vm_set_tag, message: {vmGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
     response_hash =  response.to_hash[:vm_set_tag_response][:return]
@@ -223,11 +270,11 @@ class VirtualMachines
 
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return
     end
     if $owner == nil
       puts "Error: The -o owner is required."
-      exit
+      return
     end
     response = @client.call(:vm_set_owner, message: {vmGuid: "#{$guid}", owner: "#{$owner}"})
     response_hash =  response.to_hash[:vm_set_tag_response][:return]
@@ -239,7 +286,7 @@ class VirtualMachines
     $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return
     end
     response = @client.call(:evm_smart_start, message: {vmGuid: "#{$guid}"})
     response_hash =  response.to_hash[:evm_smart_start_response][:return]
@@ -251,7 +298,7 @@ class VirtualMachines
     $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return
     end
     response = @client.call(:evm_smart_stop, message: {vmGuid: "#{$guid}"})
     response_hash =  response.to_hash[:evm_smart_stop_response][:return]
@@ -263,7 +310,7 @@ class VirtualMachines
     $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
-      exit
+      return
     end
     response = @client.call(:evm_smart_suspend, message: {vmGuid: "#{$guid}"})
     response_hash =  response.to_hash[:evm_smart_suspend_response][:return]
@@ -275,7 +322,7 @@ class VirtualMachines
     $name = args['-n']
     if $name == nil
       puts "Error: The -n vmName is required."
-      exit
+      return
     end
     response = @client.call(:evm_delete_vm_by_name, message: {vmName: "#{$name}"})
     response_hash =  response.to_hash[:evm_delete_vm_by_name_response][:return]
