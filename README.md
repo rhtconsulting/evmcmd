@@ -6,7 +6,6 @@ Requirements
 ------------
 Ruby 2.0 or higher
 Savon 2.0 or higher
-httpclient 2.3.4.1 
 
 Usage
 -----
