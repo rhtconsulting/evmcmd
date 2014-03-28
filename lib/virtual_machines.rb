@@ -35,25 +35,12 @@ class VirtualMachines
     vm_hash =  vm.to_hash[:find_vm_by_guid_response][:return]
     vm_details = AddHashToArray(vm_hash)
     vm_details.each { |vm|
-      if vm[:host] == nil
-        $hostGuid = nil
-      else
-        $hostGuid = vm[:host][:guid]
-      end
-      if vm[:parent_cluster] == nil
-        $clusterId = nil
-      else
-        $clusterId = vm[:parent_cluster][:id]
-      end
-      if vm[:parent_resource_pool] == nil
-        $resourcepoolId = nil
-      else
-        $resourcepoolId = vm[:parent_resource_pool][:id]
-      end
+      $hostGuid = vm[:host][:guid]
+      $clusterId = vm[:parent_cluster][:id]
+      $resourcepoolId = vm[:parent_resource_pool][:id]
     }
     if vm_hash.nil?
       puts "vm_hash is empty"
-      @msg_details.merge!(:vm_details => nil)
     else
       @msg_details.merge!(:vm_details => vm_hash)
     end
@@ -61,48 +48,38 @@ class VirtualMachines
     ############################################################
     # Host
     ############################################################
-    if !$hostId.nil?
-      puts "# Retrieving Host information for VM"
-      host = @client.call(:find_host_by_guid, message: {hostGuid: "#{$hostGuid}"})
-      host_hash =  host.to_hash[:find_host_by_guid_response][:return]
-      puts host_hash.inspect
-      host_details = AddHashToArray(host_hash)
-      if host_hash.nil?
-        puts "host_hash is empty"
-        @msg_details.merge!(:host_details => nil)
-      else
-        @msg_details.merge!(:host_details => host_hash)
-      end
+    puts "# Retrieving Host information for VM"
+    host = @client.call(:find_host_by_guid, message: {hostGuid: "#{$hostGuid}"})
+    host_hash =  host.to_hash[:find_host_by_guid_response][:return]
+    host_details = AddHashToArray(host_hash)
+    if host_hash.nil?
+      puts "host_hash is empty"
+    else
+      @msg_details.merge!(:host_details => host_hash)
     end
 
     ############################################################
     # Cluster
     ############################################################
-    if !$clusterId.nil?
-      puts "# Retrieving Parent Cluster of VM"
-      cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{$clusterId}"})
-      cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
-      if cluster_hash.nil?
-        puts "cluster_hash is empty"
-        @msg_details.merge!(:cluster_details => nil)
-      else
-        @msg_details.merge!(:cluster_details => cluster_hash)
-      end
+    puts "# Retrieving Parent Cluster of VM"
+    cluster = @client.call(:find_cluster_by_id, message: {clusterId: "#{$clusterId}"})
+    cluster_hash =  cluster.to_hash[:find_cluster_by_id_response][:return]
+    if cluster_hash.nil?
+      puts "cluster_hash is empty"
+    else
+      @msg_details.merge!(:cluster_details => cluster_hash)
     end
 
     ############################################################
     # Resource Pools
     ############################################################
-    if !$resourcepoolId.nil?
-      puts "# Retrieving Resource Pools of VM"
-      resourcepool = @client.call(:find_resource_pool_by_id, message: {resourcepoolId: "#{$resourcepoolId}"})
-      resourcepool_hash =  resourcepool.to_hash[:find_resource_pool_by_id_response][:return]
-      if resourcepool_hash.nil?
-        puts "resourcepool_hash is empty"
-        @msg_details.merge!(:resourcepool_details => nil)
-      else
-        @msg_details.merge!(:resourcepool_details => resourcepool_hash)
-      end
+    puts "# Retrieving Resource Pools of VM"
+    resourcepool = @client.call(:find_resource_pool_by_id, message: {resourcepoolId: "#{$resourcepoolId}"})
+    resourcepool_hash =  resourcepool.to_hash[:find_resource_pool_by_id_response][:return]
+    if resourcepool_hash.nil?
+      puts "resourcepool_hash is empty"
+    else
+      @msg_details.merge!(:resourcepool_details => resourcepool_hash)
     end
 
   end
@@ -150,17 +127,17 @@ class VirtualMachines
             "\tDiscovered:\t\t\t#{data[:vm_details][:created_on]}\n",
             "\tLast Analyzed:\t\t\t#{data[:vm_details][:last_scan_on]}\n",
             "\nRelationships:\n",
-                    "\tInfrastructure Provider:\t#{data[:vm_details][:ext_management_system][:name]}\n"
+                "\tInfrastructure Provider:\t#{data[:vm_details][:ext_management_system][:name]}\n"
                             if data[:host_details] != nil
-                              print "\tHost:\t\t\t\t#{data[:host_details][:name]}\n"
+                              "\tHost:\t\t\t\t#{data[:host_details][:name]}\n"
                             end
-                           if data[:cluster_details] != nil
+                            if data[:cluster_details] != nil
                               print "\tCluster:\t\t\t#{data[:cluster_details][:name]}\n"
                             end
-                            if !data[:rp_details].nil?
+                            if data[:rp_details] != nil
                               print "\tResource Pool:\t\t\t#{data[:rp_details][:name]}\n"
                             end
-            print "\tDatastores:\t\t\t#{data[:vm_details][:datastores][:item][:name]}\n",
+    print "\tDatastores:\t\t\t#{data[:vm_details][:datastores][:item][:name]}\n",
             "\nCompliance:\n",
             "\tStatus:\t\t\t\t#{vm_wsinfo[:last_compliance_status]}\n",
             "\tHistory:\t\t\t#{vm_wsinfo[:last_compliance_timestamp]}\n",

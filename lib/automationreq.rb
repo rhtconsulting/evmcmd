@@ -47,6 +47,7 @@ class AutomationRequest
     response = @client.call(:create_automation_request, message: body_hash)
     request_hash = response.to_hash
     puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
 
   end
 
@@ -67,25 +68,6 @@ class AutomationRequest
     request_hash = response.to_hash
     puts "Request Returned: #{request_hash.inspect}"
     puts "Provision Request Id: #{request_hash[:get_automation_request_response][:return].inspect}"
-
-  end
-
-  ########################################################################################################################
-  def create_instance(args)
-    $namespace = args['-n']
-    $class = args['-c']
-    $instance = args['-i']
-    $value = args['-v']
-
-    body_hash = {}
-    body_hash['version']            = '1.1'
-    body_hash['uri_parts']          = "namespace=System|class=Request|instance=Custom_Import|message=create"
-    body_hash['parameters']         = "namespace=#{$namespace}|class=#{$class}|instance=#{$instance}|data=#{$value}"
-    body_hash['requester']          = "user_name=admin|owner_last_name=Lastname|owner_first_name=Firstname|owner_email=root@localhost|auto_approve=true"
-
-    response = @client.call(:create_automation_request, message: body_hash)
-    request_hash = response.to_hash
-    puts "Request Returned: #{request_hash.inspect}"
 
   end
 

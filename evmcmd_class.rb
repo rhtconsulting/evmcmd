@@ -310,8 +310,6 @@ class EvmCmd
           @cluster.gethosts(run_arguments)
         when "cluster_getmgtsys"
           @cluster.getmgtsys(run_arguments)
-        when "create_instance"
-          @automationreq.create_instance(run_arguments)
         when "test"
           @evm_commands.each do |cmd|
             begin
