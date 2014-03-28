@@ -103,6 +103,11 @@ class VirtualMachines
 
   ########################################################################################################################
   def gettags(args)
+    if args.count < 2
+      puts "Error, you must specify -g GUID or name with a value"
+      return
+    end
+
     $guid = args['-g']
 
     if $guid == nil
@@ -203,8 +208,8 @@ class VirtualMachines
 
   ########################################################################################################################
   def details(args)
-    $guid = args['-g']
-    if $guid == nil
+    #$guid = args['-g']
+    if args.count < 2
       puts "Error, you must specify -g GUID  with a value"
     else
       load(args['-g'])
@@ -221,6 +226,12 @@ class VirtualMachines
 
   ########################################################################################################################
   def bytag(args)
+
+    if args.count < 2
+      puts "Error: The -t category/category_name is required."
+      return
+    end
+
     $tag = args['-t']
 
     if $tag == nil
@@ -242,6 +253,10 @@ class VirtualMachines
 
   ########################################################################################################################
   def settag(args)
+    if args.count < 6
+      puts "Error: The following options are required: -g GUID, -c category, -n category_name."
+      return
+    end
     $guid = args['-g']
     $category = args['-c']
     $name = args['-n']
@@ -265,6 +280,11 @@ class VirtualMachines
 
   ########################################################################################################################
   def setowner(args)
+    if args.count < 4
+      puts "Error: The following options are required: -g GUID, -o owner."
+      return
+    end
+
     $guid = args['-g']
     $owner = args['-o']
 
@@ -295,6 +315,10 @@ class VirtualMachines
 
   ########################################################################################################################
   def state_stop(args)
+    if args.count < 2
+      puts "Error, you must specify -g GUID  with a value"
+    end
+
     $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
@@ -307,6 +331,10 @@ class VirtualMachines
 
   ########################################################################################################################
   def state_suspend(args)
+    if args.count < 2
+      puts "Error, you must specify -g GUID  with a value"
+    end
+
     $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
@@ -319,6 +347,10 @@ class VirtualMachines
 
   ########################################################################################################################
   def vmrm(args)
+    if args.count < 2
+      puts "Error: The -n vmName is required."
+    end
+
     $name = args['-n']
     if $name == nil
       puts "Error: The -n vmName is required."
