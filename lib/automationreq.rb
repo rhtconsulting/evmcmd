@@ -23,17 +23,12 @@ class AutomationRequest
     body_hash['tags']                       = "#{$tags}"
     body_hash['options']            = { 'values' => "#{$values}", 'miq_custom_attributes' => "#{$miq_values}", 'ems_custom_attributes' => "#{$ems_values}" }
 
+    puts body_hash.inspect
+
     response = @client.call(:vm_provision_request, message: body_hash)
     request_hash = response.to_hash
-
-    if args['--out'] == nil
-      puts "Request Returned: #{request_hash.inspect}"
-      puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
-    end
-
-    if args['--out'] == 'json'
-      puts JSON.pretty_generate(request_hash[:vm_provision_request_response][:return])
-    end
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
 
   end
 
@@ -51,15 +46,8 @@ class AutomationRequest
 
     response = @client.call(:create_automation_request, message: body_hash)
     request_hash = response.to_hash
-
-    if args['--out'] == nil
-      puts "Request Returned: #{request_hash.inspect}"
-      puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
-    end
-
-    if args['--out'] == 'json'
-      puts JSON.pretty_generate(request_hash[:vm_provision_request_response][:return])
-    end
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
 
   end
 
@@ -68,15 +56,8 @@ class AutomationRequest
     $id = args['-i']
     response = @client.call(:get_automation_task, message: {taskId: "#{$id}"})
     request_hash = response.to_hash
-
-    if args['--out'] == nil
-      puts "Request Returned: #{request_hash.inspect}"
-      puts "Provision Request Id: #{request_hash[:get_automation_task_response][:return].inspect}"
-    end
-
-    if args['--out'] == 'json'
-      puts JSON.pretty_generate(request_hash[:get_automation_task_response][:return])
-    end
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:get_automation_task_response][:return].inspect}"
 
   end
 
@@ -85,16 +66,8 @@ class AutomationRequest
     $id = args['-i']
     response = @client.call(:get_automation_request, message: {requestId: "#{$id}"})
     request_hash = response.to_hash
-
-    if args['--out'] == nil
-
-      puts "Request Returned: #{request_hash.inspect}"
-      puts "Provision Request Id: #{request_hash[:get_automation_request_response][:return].inspect}"
-    end
-
-    if args['--out'] == 'json'
-      puts JSON.pretty_generate(request_hash[:get_automation_request_response][:return])
-    end
+    puts "Request Returned: #{request_hash.inspect}"
+    puts "Provision Request Id: #{request_hash[:get_automation_request_response][:return].inspect}"
 
   end
 
