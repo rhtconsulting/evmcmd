@@ -183,7 +183,11 @@ class VirtualMachines
       #print "\tDatastores:\t\t\t#{data[:vm_details][:datastores][:item][:name]}\n",
       data_stores = data[:vm_details][:datastores]
       if data_stores != nil
-        print "\t\t\t#{data_stores[:item][:name]}\n"
+        if (data_stores[:item] != nil) then
+          print "\t\t\t#{data_stores[:item][:name]}\n"
+        else
+          print "\t\t\tNone\n"
+        end
       end
 
       print      "\nCompliance:\n",
@@ -208,19 +212,24 @@ class VirtualMachines
 
   ########################################################################################################################
   def details(args)
-    #$guid = args['-g']
-    if args.count < 2
+    begin
+      $guid = args['-g']
+      puts args.inspect
+      if $guid == nil
+        puts "Error, you must specify -g GUID  with a value"
+      else
+        load(args['-g'])
+        if args['--out'] == nil
+          printout(@msg_details)
+        end
+
+        if args['--out'] == 'json'
+          puts JSON.pretty_generate(@msg_details)
+        end
+      end
+    rescue => err
+      puts "Exception: #{err.message}"
       puts "Error, you must specify -g GUID  with a value"
-    else
-      load(args['-g'])
-      if args['--out'] == nil
-        printout(@msg_details)
-      end
-
-      if args['--out'] == 'json'
-        puts JSON.pretty_generate(@msg_details)
-      end
-
     end
   end
 

@@ -107,35 +107,14 @@ class AutomationRequest
 
     body_hash = {}
     body_hash['version']            = '1.1'
-    body_hash['uri_parts']          = "namespace=evmcmd/Factory|class=Instances|instance=CreateInstance|message=create"
-    body_hash['parameters']         = "namespace=#{$namespace}|class=#{$class}|instance=#{$instance}|value=#{$value}"
+    body_hash['uri_parts']          = "namespace=System|class=Request|instance=Custom_Import|message=create"
+    body_hash['parameters']         = "namespace=#{$namespace}|class=#{$class}|instance=#{$instance}|data=#{$value}"
     body_hash['requester']          = "user_name=admin|owner_last_name=Lastname|owner_first_name=Firstname|owner_email=root@localhost|auto_approve=true"
 
     response = @client.call(:create_automation_request, message: body_hash)
     request_hash = response.to_hash
     puts "Request Returned: #{request_hash.inspect}"
 
-  end
-
-  ########################################################################################################################
-  def export_chargeback_prices(args)
-    body_hash = {}
-    body_hash['version']            = '1.1'
-    body_hash['uri_parts']          = "namespace=evmcmd|class=RailsRunner|instance=ChargebackExport|message=create"
-    body_hash['parameters']         = "send_stdout=true"
-    body_hash['requester']          = "user_name=admin|owner_last_name=Lastname|owner_first_name=Firstname|owner_email=root@localhost|auto_approve=true"
-
-    response = @client.call(:create_automation_request, message: body_hash)
-    request_hash = response.to_hash
-
-
-    if args['--out'] == nil
-      puts "Request Returned: #{request_hash.inspect}"
-    end
-
-    if args['--out'] == 'json'
-      puts JSON.pretty_generate(response_hash)
-    end
   end
 
 end
