@@ -149,7 +149,7 @@ class EvmCmd
 
   ########################################################################################################################
   def help ( cmd )
-    if cmd == {}
+    if cmd == nil
       puts "#  This is a work in progress, only have commands to allow to query cloudforms without options being passed at this time
       #  You are able to tab complete each command if needed
       \t Commands that can currently be run: "
@@ -160,11 +160,13 @@ class EvmCmd
       end
     else
       @list.each do | citem, msg |
-        if citem == cmd[0]
-          command = citem
-          message = msg
-          puts "#{command} : #{message}"
-          break
+        if citem == cmd 
+          if citem != nil
+            command = citem
+            message = msg
+            puts "#{command} : #{message}"
+            break
+          end
         end
       end
     end
@@ -186,17 +188,17 @@ class EvmCmd
           run_cmd = line.split
           cmd = {'-x'=>"#{run_cmd[0]}"}
           run_cmd.delete(run_cmd[0])
-          (run_cmd.count == 1) ? run_args = run_cmd : run_args = Hash[*run_cmd.flatten]
+          run_args = Hash[*run_cmd.flatten]
           run_method = cmd['-x']
           run_arguments = run_args
-#          puts "Running command #{run_method} arguments: #{run_arguments}"
+#         puts "Running command #{run_method} arguments: #{run_arguments}"
           handle_call(cmd['-x'], run_args)
         end
       else
         run_cmd = arguments['-x']
         run_method = arguments['-x']
         run_arguments = arguments
-        puts "Running command #{run_method} arguments: #{run_arguments}"
+#        puts "Running command #{run_method} arguments: #{run_arguments}"
         handle_call(arguments['-x'], run_arguments)
       end
     rescue => exception
@@ -309,6 +311,8 @@ class EvmCmd
           @cluster.gethosts(run_arguments)
         when "cluster_getmgtsys"
           @cluster.getmgtsys(run_arguments)
+        when "create_instance"
+          @automationreq.create_instance(run_arguments)
         when "test"
           @evm_commands.each do |cmd|
             begin
@@ -321,7 +325,11 @@ class EvmCmd
         when "event_list"
           @client.call(:evm_event_list, nil)
         when "help"
-          self.help(run_arguments)
+          if (run_arguments == nil)
+            self.help(nil)
+          else 
+            self.help(run_arguments)
+          end
         else
           puts "Unrecognized command: #{run_method}"
           self.help({})
