@@ -191,18 +191,14 @@ class EvmCmd
           run_args = Hash[*run_cmd.flatten]
           run_method = cmd['-x']
           run_arguments = run_args
-#          puts "Running command #{run_method} arguments: #{run_arguments}"
+#         puts "Running command #{run_method} arguments: #{run_arguments}"
           handle_call(cmd['-x'], run_args)
         end
       else
         run_cmd = arguments['-x']
         run_method = arguments['-x']
         run_arguments = arguments
-<<<<<<< HEAD
-        puts "Running command #{run_method} arguments: #{run_arguments}"
-=======
 #        puts "Running command #{run_method} arguments: #{run_arguments}"
->>>>>>> master
         handle_call(arguments['-x'], run_arguments)
       end
     rescue => exception
