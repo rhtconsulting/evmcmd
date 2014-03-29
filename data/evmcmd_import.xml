@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MiqAeDatastore version="1.0">
+<MiqAeClass name="Methods" namespace="evmcmd">
+  <MiqAeMethod name="CreateInstance" language="ruby" scope="instance" location="inline"><![CDATA[###################################
+#
+# EVM Automate Method: CreateInstance
+#
+# Notes: EVM Automate method to create instances
+#
+###################################
+begin
+  @method = 'CreateInstance'
+  $evm.log("info", "===== EVM Automate Method: <#{@method}> Started")
+
+  # Turn of verbose logging
+  @debug = true
+
+  require 'json'
+
+  ############################
+  #
+  # Method: instance_create
+  # Notes: Returns string: true/false
+  #
+  ############################
+  def instance_create(path, hash)
+    result = $evm.instance_create(path, hash)
+    if result
+      $evm.log('info',"==== Instance: <#{path}> created. Result:<#{result.inspect}>") if @debug
+    else
+      $evm.log('info',"==== Instance: <#{path}> not created. Result:<#{result.inspect}>") if @debug
+    end
+    return result
+  end
+
+  ############################
+  #
+  # Method: instance_exists
+  # Notes: Returns string: true/false
+  #
+  ############################
+  def instance_exists(path)
+    result = $evm.instance_exists?(path)
+    if result
+      $evm.log('info',"==== Instance:<#{path}> exists. Result:<#{result.inspect}>") if @debug
+    else
+      $evm.log('info',"==== Instance:<#{path}> does not exist. Result:<#{result.inspect}>") if @debug
+    end
+    return result
+  end
+
+  def import(location, name, value)
+    # Call import method
+    hash = {}
+    hash['name']     = name
+    hash['value']     = value
+    location = "#{location}/#{hash['name']}"
+    $evm.log("info", "Instance:<#{location}> Hash:<#{hash.inspect}>") if @debug
+
+    instance_create(location, hash)
+  end
+#  $evm.log("info", "========= INSPECT:<#{$evm.inspect}>") if @debug
+
+
+  cr_namespace = $evm.root['namespace'] || nil
+  cr_class = $evm.root['class'] || nil
+  cr_instance = $evm.root['instance'] || nil
+  cr_data = $evm.root['value'] || nil
+  import("#{cr_namespace}/#{cr_class}","#{cr_instance}","#{cr_data}")
+
+
+
+#  $evm.log("info", "========= EVM ROOT #{$evm.root.inspect}") if @debug
+
+
+
+  #
+  # Exit method
+  #
+  $evm.log("info", "===== EVM Automate Method: <#{@method}> Ended")
+  exit MIQ_OK
+
+    #
+    # Set Ruby rescue behavior
+    #
+rescue => err
+  $evm.log("error", "<#{@method}>: [#{err}]\n#{err.backtrace.join("\n")}")
+  exit MIQ_ABORT
+end]]>    </MiqAeMethod>
+  <MiqAeSchema>
+    <MiqAeField name="namespace" substitute="true" aetype="attribute" datatype="string" priority="2" message="create">
+    </MiqAeField>
+    <MiqAeField name="class" substitute="true" aetype="attribute" datatype="string" priority="3" message="create">
+    </MiqAeField>
+    <MiqAeField name="instance" substitute="true" aetype="attribute" datatype="string" priority="4" message="create">
+    </MiqAeField>
+    <MiqAeField name="value" substitute="true" aetype="attribute" datatype="string" priority="5" message="create">
+    </MiqAeField>
+    <MiqAeField name="execute" substitute="true" aetype="method" datatype="string" priority="6" message="create">
+    </MiqAeField>
+  </MiqAeSchema>
+  <MiqAeInstance name="CreateInstance">
+    <MiqAeField name="path_to_db">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="namespace">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="class">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="instance">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="value">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="execute">
+      CreateInstance      </MiqAeField>
+  </MiqAeInstance>
+  <MiqAeInstance name="CreateMethod">
+    <MiqAeField name="path_to_db">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="namespace">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="class">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="instance">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="value">
+      <![CDATA[]]>
+    </MiqAeField>
+    <MiqAeField name="execute">
+      CreateMethod      </MiqAeField>
+  </MiqAeInstance>
+</MiqAeClass>
+
+</MiqAeDatastore>
