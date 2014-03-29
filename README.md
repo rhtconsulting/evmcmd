@@ -66,6 +66,7 @@ Usage
 ./evmcmd.rb get_automation_task -i id    
 ./evmcmd.rb provision_request -t templateFields -v vmFields -r requester -c tags -V values -E ems_custom_attributes -M miq_custom_attributes    
 ./evmcmd.rb automation_request -u uri_parts -p parameters -r requester    
+./evmcmd.rb create_instance -n namespace -c class -i instance -v value
 
 
 
