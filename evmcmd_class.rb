@@ -127,9 +127,10 @@ class EvmCmd
     end
     @cfmeuser = config["connection"]["user"]
     @cfmepass = config["connection"]["pass"]
+    @cfmeport = config["connection"]["port"]
     @cmdprompt = config["application"]["prompt"]
     @client = CFMEConnection.instance
-    @client.login(@cfmehost, @cfmeuser, @cfmepass)
+    @client.login(@cfmehost, @cfmeport, @cfmeuser, @cfmepass)
     @management_sytems = ManagementSystems.new
     @virtualmachines = VirtualMachines.new
     @host = Host.new
