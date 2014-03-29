@@ -68,8 +68,9 @@ Usage
 ./evmcmd.rb automation_request -u uri_parts -p parameters -r requester
 
 
-# To create Instances you must have imported the evmcmd_import.xml file in data/evmcmd_import.xml
+- To create Instances you must have imported the evmcmd_import.xml file in data/evmcmd_import.xml
 ./evmcmd.rb create_instance -n namespace -c class -i instance -v value
+
 
 
 
