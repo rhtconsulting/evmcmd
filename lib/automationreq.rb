@@ -23,12 +23,17 @@ class AutomationRequest
     body_hash['tags']                       = "#{$tags}"
     body_hash['options']            = { 'values' => "#{$values}", 'miq_custom_attributes' => "#{$miq_values}", 'ems_custom_attributes' => "#{$ems_values}" }
 
-    puts body_hash.inspect
-
     response = @client.call(:vm_provision_request, message: body_hash)
     request_hash = response.to_hash
-    puts "Request Returned: #{request_hash.inspect}"
-    puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
+
+    if args['--out'] == nil
+      puts "Request Returned: #{request_hash.inspect}"
+      puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
+    end
+
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(request_hash[:vm_provision_request_response][:return])
+    end
 
   end
 
@@ -46,8 +51,15 @@ class AutomationRequest
 
     response = @client.call(:create_automation_request, message: body_hash)
     request_hash = response.to_hash
-    puts "Request Returned: #{request_hash.inspect}"
-    puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
+
+    if args['--out'] == nil
+      puts "Request Returned: #{request_hash.inspect}"
+      puts "Provision Request Id: #{request_hash[:vm_provision_request_response][:return].inspect}"
+    end
+
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(request_hash[:vm_provision_request_response][:return])
+    end
 
   end
 
@@ -56,8 +68,15 @@ class AutomationRequest
     $id = args['-i']
     response = @client.call(:get_automation_task, message: {taskId: "#{$id}"})
     request_hash = response.to_hash
-    puts "Request Returned: #{request_hash.inspect}"
-    puts "Provision Request Id: #{request_hash[:get_automation_task_response][:return].inspect}"
+
+    if args['--out'] == nil
+      puts "Request Returned: #{request_hash.inspect}"
+      puts "Provision Request Id: #{request_hash[:get_automation_task_response][:return].inspect}"
+    end
+
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(request_hash[:get_automation_task_response][:return])
+    end
 
   end
 
@@ -66,8 +85,16 @@ class AutomationRequest
     $id = args['-i']
     response = @client.call(:get_automation_request, message: {requestId: "#{$id}"})
     request_hash = response.to_hash
-    puts "Request Returned: #{request_hash.inspect}"
-    puts "Provision Request Id: #{request_hash[:get_automation_request_response][:return].inspect}"
+
+    if args['--out'] == nil
+
+      puts "Request Returned: #{request_hash.inspect}"
+      puts "Provision Request Id: #{request_hash[:get_automation_request_response][:return].inspect}"
+    end
+
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(request_hash[:get_automation_request_response][:return])
+    end
 
   end
 
@@ -80,14 +107,35 @@ class AutomationRequest
 
     body_hash = {}
     body_hash['version']            = '1.1'
-    body_hash['uri_parts']          = "namespace=System|class=Request|instance=Custom_Import|message=create"
-    body_hash['parameters']         = "namespace=#{$namespace}|class=#{$class}|instance=#{$instance}|data=#{$value}"
+    body_hash['uri_parts']          = "namespace=evmcmd/Factory|class=Instances|instance=CreateInstance|message=create"
+    body_hash['parameters']         = "namespace=#{$namespace}|class=#{$class}|instance=#{$instance}|value=#{$value}"
     body_hash['requester']          = "user_name=admin|owner_last_name=Lastname|owner_first_name=Firstname|owner_email=root@localhost|auto_approve=true"
 
     response = @client.call(:create_automation_request, message: body_hash)
     request_hash = response.to_hash
     puts "Request Returned: #{request_hash.inspect}"
 
+  end
+
+  ########################################################################################################################
+  def export_chargeback_prices(args)
+    body_hash = {}
+    body_hash['version']            = '1.1'
+    body_hash['uri_parts']          = "namespace=evmcmd|class=RailsRunner|instance=ChargebackExport|message=create"
+    body_hash['parameters']         = "send_stdout=true"
+    body_hash['requester']          = "user_name=admin|owner_last_name=Lastname|owner_first_name=Firstname|owner_email=root@localhost|auto_approve=true"
+
+    response = @client.call(:create_automation_request, message: body_hash)
+    request_hash = response.to_hash
+
+
+    if args['--out'] == nil
+      puts "Request Returned: #{request_hash.inspect}"
+    end
+
+    if args['--out'] == 'json'
+      puts JSON.pretty_generate(response_hash)
+    end
   end
 
 end

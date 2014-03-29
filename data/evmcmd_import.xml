@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MiqAeDatastore version="1.0">
-<MiqAeClass name="Methods" namespace="evmcmd">
-  <MiqAeMethod name="CreateInstance" language="ruby" scope="instance" location="inline"><![CDATA[###################################
+  <MiqAeClass name="Instances" namespace="evmcmd/Factory">
+    <MiqAeMethod name="CreateInstance" language="ruby" scope="instance" location="inline"><![CDATA[###################################
 #
 # EVM Automate Method: CreateInstance
 #
@@ -87,56 +87,310 @@ rescue => err
   $evm.log("error", "<#{@method}>: [#{err}]\n#{err.backtrace.join("\n")}")
   exit MIQ_ABORT
 end]]>    </MiqAeMethod>
-  <MiqAeSchema>
-    <MiqAeField name="namespace" substitute="true" aetype="attribute" datatype="string" priority="2" message="create">
-    </MiqAeField>
-    <MiqAeField name="class" substitute="true" aetype="attribute" datatype="string" priority="3" message="create">
-    </MiqAeField>
-    <MiqAeField name="instance" substitute="true" aetype="attribute" datatype="string" priority="4" message="create">
-    </MiqAeField>
-    <MiqAeField name="value" substitute="true" aetype="attribute" datatype="string" priority="5" message="create">
-    </MiqAeField>
-    <MiqAeField name="execute" substitute="true" aetype="method" datatype="string" priority="6" message="create">
-    </MiqAeField>
-  </MiqAeSchema>
-  <MiqAeInstance name="CreateInstance">
-    <MiqAeField name="path_to_db">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="namespace">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="class">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="instance">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="value">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="execute">
-      CreateInstance      </MiqAeField>
-  </MiqAeInstance>
-  <MiqAeInstance name="CreateMethod">
-    <MiqAeField name="path_to_db">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="namespace">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="class">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="instance">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="value">
-      <![CDATA[]]>
-    </MiqAeField>
-    <MiqAeField name="execute">
-      CreateMethod      </MiqAeField>
-  </MiqAeInstance>
-</MiqAeClass>
+    <MiqAeSchema>
+      <MiqAeField name="namespace" substitute="true" aetype="attribute" datatype="string" priority="2" message="create">
+      </MiqAeField>
+      <MiqAeField name="class" substitute="true" aetype="attribute" datatype="string" priority="3" message="create">
+      </MiqAeField>
+      <MiqAeField name="instance" substitute="true" aetype="attribute" datatype="string" priority="4" message="create">
+      </MiqAeField>
+      <MiqAeField name="value" substitute="true" aetype="attribute" datatype="string" priority="5" message="create">
+      </MiqAeField>
+      <MiqAeField name="execute" substitute="true" aetype="method" datatype="string" priority="6" message="create">
+      </MiqAeField>
+    </MiqAeSchema>
+    <MiqAeInstance name="CreateInstance">
+      <MiqAeField name="namespace">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="class">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="instance">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="value">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="execute">
+        CreateInstance      </MiqAeField>
+    </MiqAeInstance>
+  </MiqAeClass>
+  <MiqAeClass name="RailsRunner" namespace="evmcmd">
+    <MiqAeMethod name="ChargebackPrep" language="ruby" scope="instance" location="inline"><![CDATA[$evm.object['rails_ruby_code'] = <<EOX.chomp
+require 'json'
+
+STDOUT.puts JSON.dump(ChargebackRate.all.collect do |cr|
+  details = cr.chargeback_rate_details.collect do |crd|
+    crd.attributes.select { |k| ['id', 'enabled', 'description', 'group', 'source', 'metric', 'rate', 'per_time', 'per_unit', 'friendly_rate', 'chargeback_rate_id', 'created_on', 'updated_on'].include?(k) }
+  end
+  cr.attributes.select { |k| ['id', 'guid', 'description', 'rate_type', 'created_on', 'updated_on', 'default'].include?(k) }.merge('chargeback_rate_details' => details)
+end)
+EOX
+
+$evm.log('info', "Prepared Ruby: [#{$evm.object['rails_ruby_code']}]")]]>    </MiqAeMethod>
+    <MiqAeMethod name="ChargebackValidate" language="ruby" scope="instance" location="inline"><![CDATA[begin
+  @method = 'ChargebackExport'
+  $evm.log("info", "===== EVM Automate Method: <#{@method}> Started")
+
+  # Turn of verbose logging
+  @debug = true
+
+  ###################################
+  #
+  # require ruby gems
+  #
+  ###################################
+  require 'json'
+  require 'net/http'
+
+  ###################################
+  #
+  # Gather rails_output
+  #
+  ###################################
+  data = $evm.object['rails_output']
+
+  ###################################
+  #
+  # Method: get_variables
+  #
+  ###################################
+  export_http = nil
+  export_http ||= $evm.object['export_http'] || false
+  http_url = $evm.object['http_url'] || nil
+
+  export_csv = nil
+  export_csv ||= $evm.object['export_csv'] || false
+  csv_file = $evm.object['csv_file']
+
+  ###################################
+  #
+  # Method: boolean
+  #
+  ###################################
+  def boolean(string)
+    return true if string == true || string =~ (/(true|t|yes|y|1)$/i)
+    return false if string == false || string.nil? || string =~ (/(false|f|no|n|0)$/i)
+
+    # Return false if string does not match any of the above
+    $evm.log("info","Invalid boolean string:<#{string}> detected. Returning false") if @debug
+    return false
+  end
+
+
+  ###################################
+  #
+  # Method: export_to_csv
+  #
+  ###################################
+  def export_to_csv(csv_file, data)
+    output = File.open( "#{csv_file}", "w" )
+    output << "chargeback_rate_details_id,chargeback_rates_description,chargeback_rates_rate_type,chargeback_rate_details_enabled,chargeback_rate_details_description,chargeback_rate_details_group,chargeback_rate_details_source,chargeback_rate_details_metric,chargeback_rate_details_rate,chargeback_rate_details_per_time,chargeback_rate_details_per_unit,chargeback_rate_details_friendly_rate,chargeback_rate_details_chargeback_rate_id,chargeback_rate_details_created_on,chargeback_rate_details_updated_on\n"
+
+    result = JSON.load(data)
+    result.each do |cr|
+      i=0
+      cr['chargeback_rate_details'].each do |v|
+        crd_id = cr['chargeback_rate_details'][i]['id']
+        crd_enabled = cr['chargeback_rate_details'][i]['enabled']
+        crd_description = cr['chargeback_rate_details'][i]['description']
+        crd_group = cr['chargeback_rate_details'][i]['group']
+        crd_source = cr['chargeback_rate_details'][i]['source']
+        crd_metric = cr['chargeback_rate_details'][i]['metric']
+        crd_rate = cr['chargeback_rate_details'][i]['rate']
+        crd_per_time = cr['chargeback_rate_details'][i]['per_time']
+        crd_per_unit = cr['chargeback_rate_details'][i]['per_unit']
+        crd_friendly_rate = cr['chargeback_rate_details'][i]['friendly_rate']
+        crd_chargeback_rate_id = cr['chargeback_rate_details'][i]['chargeback_rate_id']
+        crd_created_on = cr['chargeback_rate_details'][i]['created_on']
+        crd_updated_on = cr['chargeback_rate_details'][i]['updated_on']
+        output << "#{crd_id},#{cr['description']},#{cr['rate_type']},#{crd_enabled},#{crd_description},#{crd_group},#{crd_source},#{crd_metric},#{crd_rate},#{crd_per_time},#{crd_per_unit},#{crd_friendly_rate},#{crd_chargeback_rate_id},#{crd_created_on},#{crd_updated_on}\n"
+        i+= 1
+      end
+    end
+
+    output.close
+  end
+
+  ###################################
+  #
+  # Method: export_to_http
+  #
+  ###################################
+  def export_to_http(http_url,data)
+    uri = URI.parse("#{http_url}")
+    response = Net::HTTP.post_form(uri, data)
+  end
+
+  # Execute CSV Export
+  if boolean(export_csv)
+    export_to_csv(csv_file, data)
+    File.open("/var/www/miq/chargeback.json","w") do |f|
+       f.write(data.to_json)
+    end
+    $evm.log("info","Exporting to CSV to #{csv_file}")
+  end
+
+  # Execute HTTP Export
+  if boolean(export_http)
+    export_to_http(http_url, data)
+    $evm.log("info","Exporting JSON to HTTP #{http_url}")
+  end
+
+  fuse_message = data
+
+  args = "fuse_message=#{fuse_message}&"
+
+  args = URI.escape(args)
+  $evm.instantiate("/Alert/FuseMessaging/FuseMessaging?#{args}")
+
+  #
+  #
+  #
+  $evm.log("info", "===== EVM Automate Method: <#{@method}> Ended")
+  exit MIQ_OK
+
+rescue => err
+  $evm.log("error", "<#{@method}>: [#{err}]\n#{err.backtrace.join("\n")}")
+  exit MIQ_ABORT
+end]]>    </MiqAeMethod>
+    <MiqAeMethod name="ExecuteRailsRunner" language="ruby" scope="instance" location="inline"><![CDATA[#
+#            Automate Method
+#
+$evm.log("info", "Automate Method Started")
+#
+#            Method Code Goes here
+#
+
+  require 'io/wait'
+  require 'open3'
+  require 'tempfile'
+  require 'timeout'
+
+  DEFAULT_TIMEOUT = 120
+  RAILS_PATH      = '/var/www/miq/vmdb/script/rails'
+
+  @debug = true
+  if @debug
+    $evm.log("info", "#{@method} - Listing Root Object Attributes:")
+    $evm.root.attributes.sort.each { |k, v| $evm.log("info", "#{@method} - \t#{k}: #{v}") }
+    $evm.log("info", "#{@method} - ===========================================")
+    if $evm.object != $evm.root
+      $evm.log("info", "#{@method} - Listing Current Object Attributes:")
+      $evm.object.attributes.sort.each { |k, v| $evm.log("info", "#{@method} - \t#{k}: #{v}") }
+      $evm.log("info", "#{@method} - ===========================================")
+    end
+  end
+
+  def process_pipe(pipe, log_type)
+    data = ""
+    while pipe && pipe.ready? do
+      data << pipe.read
+    end
+    data.split('\n').each do | line |
+      $evm.log(log_type, "Rails output: [#{line}]")
+    end
+    return data
+  end
+
+  def rails_runner(ruby_code)
+    output = ""
+    errors = ""
+
+    file = Tempfile.new('ae_rails')
+    file.write(ruby_code)
+    file.flush
+    begin
+      begin
+        # Wrap in bash to free rails from the bundle environment
+        stdin, stdout, stderr, wait_thr =
+          Open3.popen3('bash', '-cl', [RAILS_PATH, 'r', file.path].join(' '))
+        stdin.close
+        Timeout.timeout(DEFAULT_TIMEOUT) do
+          begin
+            output << process_pipe(stdout, 'info')
+            errors << process_pipe(stderr, 'error')
+          end until wait_thr.join(1)
+          exit MIQ_ABORT if wait_thr.value != 0
+        end
+      rescue Timeout::Error
+        Process.kill('KILL', wait_thr.pid)
+        $evm.root['ae_result'] = 'error'
+        $evm.root['ae_reason'] = "Timed out waiting for Rails"
+        $evm.log('error', $evm.root['ae_reason'])
+        exit MIQ_OK
+      ensure
+        output << process_pipe(stdout, 'info')
+        errors << process_pipe(stderr, 'error')
+        stdout.close if stdout
+        stderr.close if stderr
+      end
+    ensure
+      file.close!
+    end
+    return output, errors
+  end
+
+  rails_ruby_code = $evm.object['rails_ruby_code']
+  unless rails_ruby_code.blank?
+    $evm.log('info', 'Invoking custom Ruby Rails code')
+    output, errors = rails_runner(rails_ruby_code)
+    $evm.log('info', "Ruby Rails result: [stdout: #{output}] [stderr: #{errors}]")
+    $evm.object['rails_output'] = output unless output.blank?
+    $evm.object['rails_errors'] = errros unless errors.blank?
+  end
+  exit MIQ_OK
+
+
+#
+#
+#
+$evm.log("info", "Automate Method Ended")
+exit MIQ_OK]]>    </MiqAeMethod>
+    <MiqAeSchema>
+      <MiqAeField name="csv_file" substitute="true" aetype="attribute" datatype="string" priority="1" message="create">
+      </MiqAeField>
+      <MiqAeField name="http_url" substitute="true" aetype="attribute" datatype="string" priority="2" message="create">
+      </MiqAeField>
+      <MiqAeField name="export_http" substitute="true" aetype="attribute" datatype="boolean" priority="3" message="create">
+        false      </MiqAeField>
+      <MiqAeField name="export_csv" substitute="true" aetype="attribute" datatype="boolean" priority="4" message="create">
+        false      </MiqAeField>
+      <MiqAeField name="export_fuse" substitute="true" aetype="attribute" datatype="boolean" priority="5" message="create">
+        false      </MiqAeField>
+      <MiqAeField name="send_stdout" substitute="true" aetype="attribute" datatype="boolean" priority="6" message="create">
+        false      </MiqAeField>
+      <MiqAeField name="PrepareRailsCode" substitute="true" aetype="method" datatype="string" priority="7" message="create">
+        PrepareRailsCode      </MiqAeField>
+      <MiqAeField name="ExecuteRailsRunner" substitute="true" aetype="method" datatype="string" priority="8" message="create">
+        ExecuteRailsRunner      </MiqAeField>
+      <MiqAeField name="ValidateRailsCode" substitute="true" aetype="method" datatype="string" priority="9" message="create">
+        ValidateRailsCode      </MiqAeField>
+    </MiqAeSchema>
+    <MiqAeInstance name="ChargebackExport">
+      <MiqAeField name="csv_file">
+        /var/www/miq/chargeback.csv      </MiqAeField>
+      <MiqAeField name="http_url">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="export_http">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="export_csv">
+        true      </MiqAeField>
+      <MiqAeField name="export_fuse">
+        false      </MiqAeField>
+      <MiqAeField name="send_stdout">
+        true      </MiqAeField>
+      <MiqAeField name="PrepareRailsCode">
+        ChargebackPrep      </MiqAeField>
+      <MiqAeField name="ExecuteRailsRunner">
+        <![CDATA[]]>
+      </MiqAeField>
+      <MiqAeField name="ValidateRailsCode">
+        ChargebackValidate      </MiqAeField>
+    </MiqAeInstance>
+  </MiqAeClass>
 
 </MiqAeDatastore>

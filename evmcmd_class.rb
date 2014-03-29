@@ -313,6 +313,8 @@ class EvmCmd
           @cluster.getmgtsys(run_arguments)
         when "create_instance"
           @automationreq.create_instance(run_arguments)
+        when "export_chargeback_prices"
+          @automationreq.export_chargeback_prices(run_arguments)
         when "test"
           @evm_commands.each do |cmd|
             begin
