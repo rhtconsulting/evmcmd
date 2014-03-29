@@ -105,7 +105,7 @@ class AutomationRequest
 
     body_hash = {}
     body_hash['version']            = '1.1'
-    body_hash['uri_parts']          = "namespace=System|class=Request|instance=Custom_Import|message=create"
+    body_hash['uri_parts']          = "namespace=evmcmd/Factory|class=Instances|instance=CreateInstance|message=create"
     body_hash['parameters']         = "namespace=#{$namespace}|class=#{$class}|instance=#{$instance}|data=#{$value}"
     body_hash['requester']          = "user_name=admin|owner_last_name=Lastname|owner_first_name=Firstname|owner_email=root@localhost|auto_approve=true"
 
