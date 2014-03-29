@@ -17,10 +17,11 @@ class CFMEConnection
 	end
 
 	#######################################################################################################################
-	def login (host, user, password)
+	def login (host, port, user, password)
 		begin
 			@host = host
-			@user = user
+      @user = user
+      @port = user
 			@password = password
 
 			@url = "https://" << host << "/vmdbws/wsdl" 
