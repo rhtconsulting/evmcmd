@@ -103,12 +103,19 @@ class VirtualMachines
 
   ########################################################################################################################
   def gettags(args)
-    if args.count < 2
-      puts "Error, you must specify -g GUID or name with a value"
+    if args.empty?
+      puts "Error, you must specify -g GUID  with a value"
+      puts args.inspect
       return
     end
-
-    $guid = args['-g']
+    if args.include?('-g')
+      begin
+        $guid = args['-g']
+      rescue => err
+        puts "Error, you must specify -g GUID  with a value"
+        return
+      end
+    end
 
     if $guid == nil
       puts "Error, you must specify -g GUID or name with a value"
@@ -213,78 +220,105 @@ class VirtualMachines
   ########################################################################################################################
   def details(args)
     begin
-      $guid = args['-g']
-      puts args.inspect
+      if args.empty?
+        puts "Error, you must specify -g GUID  with a value"
+        puts args.inspect
+        return
+      end
+      if args.include?('-g')
+        begin
+          $guid = args['-g']
+        rescue => err
+          puts "Error, you must specify -g GUID  with a value"
+          return
+        end
+      end
+
       if $guid == nil
         puts "Error, you must specify -g GUID  with a value"
       else
         load(args['-g'])
-        if args['--out'] == nil
+
+        if args.has_key?('--out')
+          if args['--out'] == 'json'
+            puts JSON.pretty_generate(@msg_details)
+          end
+        else
           printout(@msg_details)
+        end
+      end
+    rescue => err
+      puts "Exception in Class VirtualMachines: #{err.message}"
+      #puts err.backtrace
+    end
+  end
+
+
+  ########################################################################################################################
+  def bytag(args)
+    begin
+
+      if args.empty?
+        puts "Error: The -t category/category_name is required."
+        return
+      end
+      if args.include?('-t')
+        begin
+          $tag = args['-t']
+        rescue => err
+          puts "Error: The -t category/category_name is required."
+          return
+        end
+      end
+
+      if $tag == nil
+        puts "Error: The -t category/category_name is required."
+      else
+        response = @client.call(:get_vms_by_tag, message: {tag: "#{$tag}"})
+        response_hash =  response.to_hash[:get_vms_by_tag_response][:return]
+
+        if args['--out'] == nil
+          output = AddHashToArray(response_hash[:item])
+          output.each { |key| puts "GUID: #{key[:guid]}\t Name: #{key[:name]}" }
         end
 
         if args['--out'] == 'json'
-          puts JSON.pretty_generate(@msg_details)
+          puts JSON.pretty_generate(response_hash)
         end
       end
     rescue => err
       puts "Exception: #{err.message}"
-      puts "Error, you must specify -g GUID  with a value"
-    end
-  end
-
-  ########################################################################################################################
-  def bytag(args)
-
-    if args.count < 2
-      puts "Error: The -t category/category_name is required."
-      return
+      puts 'Error: The -t category/category_name is required.'
     end
 
-    $tag = args['-t']
-
-    if $tag == nil
-      puts "Error: The -t category/category_name is required."
-    else
-      response = @client.call(:get_vms_by_tag, message: {tag: "#{$tag}"})
-      response_hash =  response.to_hash[:get_vms_by_tag_response][:return]
-
-      if args['--out'] == nil
-        output = AddHashToArray(response_hash[:item])
-        output.each { |key| puts "GUID: #{key[:guid]}\t Name: #{key[:name]}" }
-      end
-
-      if args['--out'] == 'json'
-        puts JSON.pretty_generate(response_hash)
-      end
-    end
   end
 
   ########################################################################################################################
   def settag(args)
-    if args.count < 6
-      puts "Error: The following options are required: -g GUID, -c category, -n category_name."
-      return
-    end
-    $guid = args['-g']
-    $category = args['-c']
-    $name = args['-n']
+    begin
+      $guid = args['-g']
+      $category = args['-c']
+      $name = args['-n']
 
-    if $guid == nil
-      puts "Error: The -g GUID is required."
-      return 
+      if $guid == nil
+        puts "Error: The -g GUID is required."
+        return
+      end
+      if $category == nil
+        puts "Error: The -c category is required."
+        return
+      end
+      if $name == nil
+        puts "Error: The -n category_name is required."
+        return
+      end
+      response = @client.call(:vm_set_tag, message: {vmGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
+      response_hash =  response.to_hash[:vm_set_tag_response][:return]
+      gettags(args)
+    rescue => err
+      puts "Exception: #{err.message}"
+      puts 'Error: The following options are required: -g GUID, -c category, -n category_name.'
     end
-    if $category == nil
-      puts "Error: The -c category is required."
-      return
-    end
-    if $name == nil
-      puts "Error: The -n category_name is required."
-      return
-    end
-    response = @client.call(:vm_set_tag, message: {vmGuid: "#{$guid}", category: "#{$category}", name: "#{$name}"})
-    response_hash =  response.to_hash[:vm_set_tag_response][:return]
-    gettags(args)
   end
 
   ########################################################################################################################
