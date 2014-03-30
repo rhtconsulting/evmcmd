@@ -47,7 +47,7 @@ class EvmCmd
 
     @command = nil 
     @LIST = [
-        'automationreq_create',
+        'create_automation_request',
         'mgtsys_listall',
         'mgtsys_gettags',
         'mgtsys_details',
@@ -79,7 +79,7 @@ class EvmCmd
         'exit',
         'quit'].sort
     @list = [
-        ['automationreq_create', 'Create Automation Request'],
+        ['create_automation_request', 'Create Automation Request'],
         ['provisionrequest', 'Create VM Provisioning Request'],
         ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
         ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
@@ -262,6 +262,8 @@ class EvmCmd
           @virtualmachines.details(run_arguments)
         when "vm_setowner"
           @virtualmachines.setowner(run_arguments)
+        when "vm_bytag"
+          @virtualmachines.bytag(run_arguments)
         when "vm_settag"
           @virtualmachines.settag(run_arguments)
         when "vm_gettags"

@@ -40,9 +40,23 @@ class AutomationRequest
 
   ########################################################################################################################
   def create_automation_request(args)
-    $uri_parts = args['-u']
-    $parameters = args['-p']
-    $requester = args['-r']
+    if args.empty?
+      puts "Error: The -u URI -p Parameters -r Requester are required."
+      return
+    end
+    if args.include?('-u') && args.include?('-p') && args.include?('-r')
+      begin
+        $uri_parts = args['-u']
+        $parameters = args['-p']
+        $requester = args['-r']
+      rescue => err
+        puts "Error: The -u URI -p Parameters -r Requester are required."
+        return
+      end
+    else
+      puts "Error: The -u URI -p Parameters -r Requester are required."
+      return
+    end
 
     body_hash = {}
     body_hash['version']            = '1.1'
@@ -98,10 +112,24 @@ class AutomationRequest
 
   ########################################################################################################################
   def create_instance(args)
-    $namespace = args['-n']
-    $class = args['-c']
-    $instance = args['-i']
-    $value = args['-v']
+    if args.empty?
+      puts "Error: The -n Namespace -c Class -i Instance and -v Value are required."
+      return
+    end
+    if args.include?('-u') && args.include?('-p') && args.include?('-r')
+      begin
+        $namespace = args['-n']
+        $class = args['-c']
+        $instance = args['-i']
+        $value = args['-v']
+      rescue => err
+        puts "Error: The -n Namespace -c Class -i Instance and -v Value are required."
+        return
+      end
+    else
+      puts "Error: The -n Namespace -c Class -i Instance and -v Value are required."
+      return
+    end
 
     body_hash = {}
     body_hash['version']            = '1.1'

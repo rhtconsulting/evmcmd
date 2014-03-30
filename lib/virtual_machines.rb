@@ -105,7 +105,6 @@ class VirtualMachines
   def gettags(args)
     if args.empty?
       puts "Error, you must specify -g GUID  with a value"
-      puts args.inspect
       return
     end
     if args.include?('-g')
@@ -222,7 +221,6 @@ class VirtualMachines
     begin
       if args.empty?
         puts "Error, you must specify -g GUID  with a value"
-        puts args.inspect
         return
       end
       if args.include?('-g')
@@ -296,9 +294,23 @@ class VirtualMachines
   ########################################################################################################################
   def settag(args)
     begin
-      $guid = args['-g']
-      $category = args['-c']
-      $name = args['-n']
+      if args.empty?
+        puts "Error: The -t category/category_name is required."
+        return
+      end
+      if args.include?('-g') && args.include?('-c') && args.include?('-n')
+        begin
+          $guid = args['-g']
+          $category = args['-c']
+          $name = args['-n']
+        rescue => err
+          puts "Error: Options -g GUID -c Category and -n Name are required."
+          return
+        end
+      else
+        puts "Error: Options -g GUID -c Category and -n Name are required."
+        return
+      end
 
       if $guid == nil
         puts "Error: The -g GUID is required."
@@ -323,13 +335,23 @@ class VirtualMachines
 
   ########################################################################################################################
   def setowner(args)
-    if args.count < 4
-      puts "Error: The following options are required: -g GUID, -o owner."
+    if args.empty?
+      puts "Error: The -t category/category_name is required."
+      return
+    end
+    if args.include?('-g') && args.include?('-o')
+      begin
+        $guid = args['-g']
+        $owner = args['-o']
+      rescue => err
+        puts "Error: Options -g GUID and -o Owner are required."
+        return
+      end
+    else
+      puts "Error: Options -g GUID and -o Owner are required."
       return
     end
 
-    $guid = args['-g']
-    $owner = args['-o']
 
     if $guid == nil
       puts "Error: The -g GUID is required."
@@ -346,61 +368,93 @@ class VirtualMachines
 
   ########################################################################################################################
   def state_start(args)
-    $guid = args['-g']
+    if args.empty?
+      puts "Error, you must specify -g GUID  with a value"
+      return
+    end
+    if args.include?('-g')
+      begin
+        $guid = args['-g']
+      rescue => err
+        puts "Error, you must specify -g GUID  with a value"
+        return
+      end
+    end
+
     if $guid == nil
       puts "Error: The -g GUID is required."
       return
     end
     response = @client.call(:evm_smart_start, message: {vmGuid: "#{$guid}"})
     response_hash =  response.to_hash[:evm_smart_start_response][:return]
-    puts response_hash.inspect
   end
 
   ########################################################################################################################
   def state_stop(args)
-    if args.count < 2
+    if args.empty?
       puts "Error, you must specify -g GUID  with a value"
+      return
+    end
+    if args.include?('-g')
+      begin
+        $guid = args['-g']
+      rescue => err
+        puts "Error, you must specify -g GUID  with a value"
+        return
+      end
     end
 
-    $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
       return
     end
     response = @client.call(:evm_smart_stop, message: {vmGuid: "#{$guid}"})
     response_hash =  response.to_hash[:evm_smart_stop_response][:return]
-    puts response_hash.inspect
   end
 
   ########################################################################################################################
   def state_suspend(args)
-    if args.count < 2
+    if args.empty?
       puts "Error, you must specify -g GUID  with a value"
+      return
+    end
+    if args.include?('-g')
+      begin
+        $guid = args['-g']
+      rescue => err
+        puts "Error, you must specify -g GUID  with a value"
+        return
+      end
     end
 
-    $guid = args['-g']
     if $guid == nil
       puts "Error: The -g GUID is required."
       return
     end
     response = @client.call(:evm_smart_suspend, message: {vmGuid: "#{$guid}"})
     response_hash =  response.to_hash[:evm_smart_suspend_response][:return]
-    puts response_hash.inspect
   end
 
   ########################################################################################################################
   def vmrm(args)
-    if args.count < 2
+    if args.empty?
       puts "Error: The -n vmName is required."
+      return
+    end
+    if args.include?('-n')
+      begin
+        $name = args['-n']
+      rescue => err
+        puts "Error: The -n vmName is required."
+        return
+      end
     end
 
-    $name = args['-n']
     if $name == nil
       puts "Error: The -n vmName is required."
       return
     end
     response = @client.call(:evm_delete_vm_by_name, message: {vmName: "#{$name}"})
     response_hash =  response.to_hash[:evm_delete_vm_by_name_response][:return]
-    puts response_hash.inspect
   end
 end
