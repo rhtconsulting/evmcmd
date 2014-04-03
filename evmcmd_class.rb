@@ -80,6 +80,7 @@ class EvmCmd
         'quit'].sort
     @list = [
         ['create_automation_request', 'Create Automation Request'],
+        ['get_automation_request', 'Get Automation Request'],
         ['provisionrequest', 'Create VM Provisioning Request'],
         ['mgtsys_listall', 'List All managed systems in the CFME Appliance'],
         ['mgtsys_gettags', 'Get all the tags that are defined in the CFME Appliance'],
